@@ -1,5 +1,7 @@
 package jonky.modid;
 
+import jonky.modid.item.ModItems;
+import jonky.modid.villager.ModVillagers;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -11,6 +13,8 @@ public class Jonky implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ModItems.registerModItems();
+		ModVillagers.registerVillagers();
 		LOGGER.info("Jonky Mod Initialised!");
 	}
 }
