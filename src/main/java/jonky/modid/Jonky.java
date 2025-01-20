@@ -1,6 +1,8 @@
 package jonky.modid;
 
+import jonky.modid.block.ModBlocks;
 import jonky.modid.item.ModItems;
+import jonky.modid.util.ModCustomTrades;
 import jonky.modid.villager.ModVillagers;
 import net.fabricmc.api.ModInitializer;
 
@@ -14,7 +16,9 @@ public class Jonky implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ModItems.registerModItems();
+		ModBlocks.registerModBlocks();
 		ModVillagers.registerVillagers();
+		ModCustomTrades.registerCustomTrades();
 		LOGGER.info("Jonky Mod Initialised!");
 	}
 }

@@ -1,4 +1,13 @@
 {
   "item.jonky.banknote": "Banknote",
-  "entity.minecraft.villager.banker": "Banker"
+  "item.banknote.amount.info": "Null",
+  "item.banknote.amount.info.5": "Value: 5",
+  "item.banknote.amount.info.10": "Value: 10",
+  "item.banknote.amount.info.20": "Value: 20",
+  "item.banknote.amount.info.50": "Value: 50",
+  "item.banknote.amount.info.100": "Value: 100",
+  "item.banknote.amount.info.200": "Value: 200",
+  "item.banknote.amount.info.500": "Value: 500",
+  "entity.minecraft.villager.banker": "Banker",
+  "block.jonky.atm": "Automated Teller Machine"
 }
