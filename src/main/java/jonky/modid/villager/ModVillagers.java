@@ -17,7 +17,7 @@ import net.minecraft.world.poi.PointOfInterestType;
 
 public class ModVillagers {
     public static final RegistryKey<PointOfInterestType> BANKER_POI_KEY = poiKey("bankerpoi");
-    public static final PointOfInterestType BANKER_POI = registerPoi("bankerpoi", Blocks.COMMAND_BLOCK);
+    public static final PointOfInterestType BANKER_POI = registerPoi("bankerpoi", Blocks.CHISELED_BOOKSHELF);
 
     public static final VillagerProfession BANKER = registerProfession("banker", BANKER_POI_KEY);
 

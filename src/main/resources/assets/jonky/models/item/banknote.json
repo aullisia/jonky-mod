@@ -1,14 +1,15 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "jonky:item/banknote"
+    "layer0": "jonky:item/banknote/banknote"
   },
   "overrides": [
-    {
-      "predicate": {
-        "custom_model_data": 1
-      },
-      "model": "jonky:item/banknote/banknote_100"
-    }
+    { "predicate": { "custom_model_data": 2 }, "model": "jonky:item/banknote/banknote_5" },
+    { "predicate": { "custom_model_data": 3 }, "model": "jonky:item/banknote/banknote_10" },
+    { "predicate": { "custom_model_data": 4 }, "model": "jonky:item/banknote/banknote_20" },
+    { "predicate": { "custom_model_data": 5 }, "model": "jonky:item/banknote/banknote_50" },
+    { "predicate": { "custom_model_data": 6 }, "model": "jonky:item/banknote/banknote_100" },
+    { "predicate": { "custom_model_data": 7 }, "model": "jonky:item/banknote/banknote_200" },
+    { "predicate": { "custom_model_data": 8 }, "model": "jonky:item/banknote/banknote_500" }
   ]
 }

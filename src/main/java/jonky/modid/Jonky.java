@@ -1,6 +1,7 @@
 package jonky.modid;
 
 import jonky.modid.block.ModBlocks;
+import jonky.modid.component.ModDataComponentTypes;
 import jonky.modid.item.ModItems;
 import jonky.modid.util.ModCustomTrades;
 import jonky.modid.villager.ModVillagers;
@@ -15,6 +16,7 @@ public class Jonky implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ModDataComponentTypes.registerDataComponentTypes();
 		ModItems.registerModItems();
 		ModBlocks.registerModBlocks();
 		ModVillagers.registerVillagers();

@@ -3,7 +3,7 @@
 	"package": "jonky.modid.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin"
+		"BankerVillagerEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
