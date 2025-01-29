@@ -2,6 +2,8 @@ package jonky.modid;
 
 import jonky.modid.block.ModBlocks;
 import jonky.modid.component.ModDataComponentTypes;
+import jonky.modid.enchantment.ModEnchantmentEffects;
+import jonky.modid.enchantment.ModEnchantments;
 import jonky.modid.item.ModItems;
 import jonky.modid.util.ModCustomTrades;
 import jonky.modid.villager.ModVillagers;
@@ -19,6 +21,7 @@ public class Jonky implements ModInitializer {
 		ModDataComponentTypes.registerDataComponentTypes();
 		ModItems.registerModItems();
 		ModBlocks.registerModBlocks();
+		ModEnchantmentEffects.registerEnchantmentEffects();
 		ModVillagers.registerVillagers();
 		ModCustomTrades.registerCustomTrades();
 		LOGGER.info("Jonky Mod Initialised!");

@@ -1,13 +1,14 @@
 {
   "item.jonky.banknote": "Banknote",
   "item.banknote.amount.info": "Null",
-  "item.banknote.amount.info.5": "Value: 5",
-  "item.banknote.amount.info.10": "Value: 10",
-  "item.banknote.amount.info.20": "Value: 20",
-  "item.banknote.amount.info.50": "Value: 50",
-  "item.banknote.amount.info.100": "Value: 100",
-  "item.banknote.amount.info.200": "Value: 200",
-  "item.banknote.amount.info.500": "Value: 500",
+  "item.banknote.amount.info.5": "5 Jonkies",
+  "item.banknote.amount.info.10": "10 Jonkies",
+  "item.banknote.amount.info.20": "20 Jonkies",
+  "item.banknote.amount.info.50": "50 Jonkies",
+  "item.banknote.amount.info.100": "100 Jonkies",
+  "item.banknote.amount.info.200": "200 Jonkies",
+  "item.banknote.amount.info.500": "500 Jonkies",
   "entity.minecraft.villager.banker": "Banker",
-  "block.jonky.atm": "Automated Teller Machine"
+  "block.jonky.atm": "Automated Teller Machine",
+  "enchantment.jonky.forsaking": "§cCurse of Forsaking"
 }
