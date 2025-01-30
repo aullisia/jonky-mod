@@ -33,9 +33,10 @@ public class BanknoteItem extends Item {
         int banknoteValue = Objects.requireNonNull(stack.get(ModComponents.BANKNOTE_VALUE_COMPONENT));
         List<Integer> denominations = Arrays.asList(5, 10, 20, 50, 100, 200, 500);
 
+        // Handle Sneaking: Downgrade the banknote value
         if (isSneaking) {
             if (banknoteValue <= 5) {
-                Jonky.LOGGER.warn("Minimum Value");
+                //Jonky.LOGGER.warn("Cannot downgrade below the minimum denomination");
                 return;
             }
 
@@ -43,31 +44,30 @@ public class BanknoteItem extends Item {
             if (currentIndex == -1 || currentIndex == 0) return;
 
             int previousDenom = denominations.get(currentIndex - 1);
-            int quotient = banknoteValue / previousDenom;
-            int remainderValue = banknoteValue % previousDenom;
-
             int stackCount = stack.getCount();
-            int totalPrevious = quotient * stackCount;
-            int totalRemainder = (remainderValue != 0) ? stackCount : 0;
+            int totalWorth = banknoteValue * stackCount;
 
-            // Remove the original stack
-            int slot = inventory.getSlotWithStack(stack);
-            if (slot != -1) inventory.removeStack(slot);
-
-            // Add previous denomination stacks
-            if (totalPrevious > 0) {
-                ItemStack previousStack = createBanknoteStack(previousDenom, totalPrevious);
-                inventory.offer(previousStack, true);
+            // Process downgrading by breaking into smaller denominations
+            while (totalWorth >= previousDenom) {
+                int maxNewItems = totalWorth / previousDenom;
+                ItemStack newStack = createBanknoteStack(previousDenom, maxNewItems);
+                inventory.offer(newStack, true);
+                totalWorth -= maxNewItems * previousDenom;
             }
 
-            // Add remainder stack if applicable
-            if (totalRemainder > 0 && remainderValue != 0) {
-                ItemStack remainderStack = createBanknoteStack(remainderValue, totalRemainder);
-                inventory.offer(remainderStack, true);
+            // If there's leftover worth, keep it in the original stack
+            if (totalWorth > 0) {
+                int remainingCount = totalWorth / banknoteValue;
+                stack.setCount(remainingCount);
+            } else {
+                stack.setCount(0);
             }
+
+            //Jonky.LOGGER.info("Downgraded stack of {} to smaller denominations.", banknoteValue);
         } else {
+            // Handle Normal Conversion: Upgrade the banknote value
             if (banknoteValue >= 500) {
-                Jonky.LOGGER.warn("Maximum Value");
+                //Jonky.LOGGER.warn("Cannot upgrade above the maximum denomination");
                 return;
             }
 
@@ -75,52 +75,27 @@ public class BanknoteItem extends Item {
             if (currentIndex == -1 || currentIndex == denominations.size() - 1) return;
 
             int nextDenom = denominations.get(currentIndex + 1);
-            int requiredCurrent = (int) Math.ceil((double) nextDenom / banknoteValue);
+            int stackCount = stack.getCount();
+            int totalWorth = banknoteValue * stackCount;
 
-            // Calculate total current notes in inventory
-            int totalCurrent = 0;
-            for (int i = 0; i < inventory.size(); i++) {
-                ItemStack invStack = inventory.getStack(i);
-                if (invStack.getItem() == stack.getItem()) {
-                    Integer value = invStack.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
-                    if (value != null && value == banknoteValue) {
-                        totalCurrent += invStack.getCount();
-                    }
-                }
+            // Process upgrading to the next higher denomination
+            int maxNewItems = totalWorth / nextDenom;
+            int remainderWorth = totalWorth % nextDenom;
+
+            // Create the upgraded notes
+            if (maxNewItems > 0) {
+                ItemStack newStack = createBanknoteStack(nextDenom, maxNewItems);
+                inventory.offer(newStack, true);
             }
 
-            if (totalCurrent < requiredCurrent) {
-                Jonky.LOGGER.warn("Not enough notes to combine");
-                return;
+            // Update the current stack with the remainder worth
+            if (remainderWorth > 0) {
+                int remainingCount = remainderWorth / banknoteValue;
+                stack.setCount(remainingCount);
+            } else {
+                stack.setCount(0);
             }
-
-            // Consume required current notes
-            int remainingToConsume = requiredCurrent;
-            for (int i = 0; i < inventory.size(); i++) {
-                if (remainingToConsume <= 0) break;
-                ItemStack invStack = inventory.getStack(i);
-                if (invStack.getItem() == stack.getItem()) {
-                    Integer value = invStack.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
-                    if (value != null && value == banknoteValue) {
-                        int consume = Math.min(remainingToConsume, invStack.getCount());
-                        invStack.decrement(consume);
-                        if (invStack.isEmpty()) {
-                            inventory.setStack(i, ItemStack.EMPTY);
-                        }
-                        remainingToConsume -= consume;
-                    }
-                }
-            }
-
-            // Create next denomination and remainder
-            ItemStack nextDenomStack = createBanknoteStack(nextDenom, 1);
-            inventory.offer(nextDenomStack, true);
-
-            int remainderValue = (banknoteValue * requiredCurrent) - nextDenom;
-            if (remainderValue > 0) {
-                ItemStack remainderStack = createBanknoteStack(remainderValue, 1);
-                inventory.offer(remainderStack, true);
-            }
+            //Jonky.LOGGER.info("Upgraded stack of {} to higher denomination {} with {} remaining.", banknoteValue, nextDenom, remainderWorth);
         }
     }
 
