@@ -11,7 +11,7 @@
 		"homepage": "https://aullisia.dev/",
 		"sources": "https://github.com/aullisia/jonky-mod"
 	},
-	"license": "MIT",
+	"license": "CC0",
 	"icon": "assets/jonky/icon.png",
 	"environment": "*",
 	"entrypoints": {
