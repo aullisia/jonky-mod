@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "jonky",
+	"version": "${version}",
+	"name": "Jonky",
+	"description": "Jonky is a mod used in the private 'de jonkels' Minecraft Server!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://aullisia.dev/",
+		"sources": "https://github.com/aullisia/jonky-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/jonky/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"jonky.modid.Jonky"
+		],
+		"fabric-datagen": [
+			"jonky.modid.JonkyDataGenerator"
+		],
+		"client": [
+			"jonky.modid.JonkyClient"
+		]
+	},
+	"mixins": [
+		"jonky.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.10",
+		"minecraft": "~1.21.4",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

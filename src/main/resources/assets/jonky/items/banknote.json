@@ -1,0 +1,61 @@
+{
+  "model": {
+    "type": "select",
+    "property": "custom_model_data",
+    "fallback": {
+      "type": "model",
+      "model": "jonky:item/banknote"
+    },
+    "cases": [
+      {
+        "when": "5",
+        "model": {
+          "type": "model",
+          "model": "jonky:item/banknote/banknote_5"
+        }
+      },
+      {
+        "when": "10",
+        "model": {
+          "type": "model",
+          "model": "jonky:item/banknote/banknote_10"
+        }
+      },
+      {
+        "when": "20",
+        "model": {
+          "type": "model",
+          "model": "jonky:item/banknote/banknote_20"
+        }
+      },
+      {
+        "when": "50",
+        "model": {
+          "type": "model",
+          "model": "jonky:item/banknote/banknote_50"
+        }
+      },
+      {
+        "when": "100",
+        "model": {
+          "type": "model",
+          "model": "jonky:item/banknote/banknote_100"
+        }
+      },
+      {
+        "when": "200",
+        "model": {
+          "type": "model",
+          "model": "jonky:item/banknote/banknote_200"
+        }
+      },
+      {
+        "when": "500",
+        "model": {
+          "type": "model",
+          "model": "jonky:item/banknote/banknote_500"
+        }
+      }
+    ]
+  }
+}
