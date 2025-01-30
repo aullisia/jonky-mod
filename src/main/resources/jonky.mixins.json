@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "jonky.modid.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"BankerVillagerEntityMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

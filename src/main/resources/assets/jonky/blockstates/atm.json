@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "jonky:block/atm"
+    }
+  }
+}
