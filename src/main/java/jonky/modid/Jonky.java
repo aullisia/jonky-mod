@@ -1,6 +1,7 @@
 package jonky.modid;
 
 import jonky.modid.component.ModComponents;
+import jonky.modid.enchantment.ModEnchantmentEffects;
 import jonky.modid.item.ModItems;
 import jonky.modid.villager.ModVillagers;
 import net.fabricmc.api.ModInitializer;
@@ -15,6 +16,7 @@ public class Jonky implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ModComponents.registerModComponents();
+		ModEnchantmentEffects.registerEnchantmentEffects();
 		ModItems.registerModItems();
 		ModVillagers.registerVillagers();
 
