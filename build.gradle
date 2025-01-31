@@ -11,6 +11,14 @@ base {
 }
 
 repositories {
+	maven { url = 'https://jitpack.io' }
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
+	maven {
+		url = "https://api.modrinth.com/maven"
+	}
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
@@ -32,7 +40,18 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	
+
+	//Fabric Shield Lib
+	modImplementation "com.github.CrimsonDawn45:Fabric-Shield-Lib:v${project.fabric_shield_lib_version}"
+
+	// Mod Menu
+	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+
+	// midnightlib
+	modImplementation include ("maven.modrinth:midnightlib:${project.midnightlib_version}")
+
+	// ASM
+	modImplementation "com.github.Chocohead:Fabric-ASM:v${project.fabricasm_version}"
 }
 
 processResources {

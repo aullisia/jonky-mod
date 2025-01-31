@@ -10,5 +10,6 @@
   "item.banknote.amount.info.500": "500 Jonkies",
   "entity.minecraft.villager.banker": "Banker",
   "block.jonky.atm": "Automated Teller Machine",
-  "enchantment.jonky.forsaking": "§cCurse of Forsaking"
+  "enchantment.jonky.forsaking": "§cCurse of Forsaking",
+  "item.jonky.heavy_shield": "Heavy Shield"
 }
