@@ -2,14 +2,6 @@
   "parent":"fabricshieldlib:item/fabric_shield",
   "textures":{
     "shield":"jonky:item/heavy_shield"
-  },
-  "overrides": [
-    {
-      "predicate": {
-        "blocking": 1 <- there is something wrong here there is no blocking i think?
-      },
-      "model": "jonky:item/heavy_shield_blocking"
-    }
-  ]
+  }
 }
 
