@@ -6,10 +6,13 @@ import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.component.type.AttributeModifierSlot;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registerable;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntryList;
@@ -44,6 +47,9 @@ public class ModEnchantments {
     private static void modifyEnchantments() {
         EnchantmentEvents.ALLOW_ENCHANTING.register((enchantment, target, enchantingContext) -> {
             if (enchantment == Enchantments.THORNS && target.getItem() == Items.SHIELD) {
+                return TriState.TRUE; // Allow enchanting
+            }
+            if (enchantment == Enchantments.KNOCKBACK && target.getItem() == Items.SHIELD) {
                 return TriState.TRUE; // Allow enchanting
             }
 
