@@ -1,12 +1,15 @@
 {
-	"required": true,
-	"package": "jonky.modid.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"BankerVillagerEntityMixin",
-		"ExampleMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "jonky.modid.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AnvilScreenHandlerMixin",
+    "BankerVillagerEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "AnvilScreenMixin"
+  ]
 }
