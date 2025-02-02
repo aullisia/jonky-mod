@@ -2,10 +2,13 @@ package jonky.modid.enchantment;
 
 import jonky.modid.Jonky;
 import jonky.modid.enchantment.custom.ForsakingEnchantmentEffect;
+import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registerable;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -38,7 +41,18 @@ public class ModEnchantments {
                         new ForsakingEnchantmentEffect()));
     }
 
+    private static void modifyEnchantments() {
+        EnchantmentEvents.ALLOW_ENCHANTING.register((enchantment, target, enchantingContext) -> {
+            if (enchantment == Enchantments.THORNS && target.getItem() == Items.SHIELD) {
+                return TriState.TRUE; // Allow enchanting
+            }
+
+            return TriState.DEFAULT;
+        });
+    }
+
     private static void register(Registerable<Enchantment> registry, RegistryKey<Enchantment> key, Enchantment.Builder builder) {
         registry.register(key, builder.build(key.getValue()));
+        modifyEnchantments();
     }
 }
