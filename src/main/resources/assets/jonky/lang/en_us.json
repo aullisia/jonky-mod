@@ -11,5 +11,8 @@
   "entity.minecraft.villager.banker": "Banker",
   "block.jonky.atm": "Automated Teller Machine",
   "enchantment.jonky.forsaking": "§cCurse of Forsaking",
-  "item.jonky.heavy_shield": "Heavy Shield"
+  "item.jonky.heavy_shield": "Heavy Shield",
+  "item.jonky.atm_block": "Automated Teller Machine",
+  "block.jonky.atm_block": "Automated Teller Machine",
+  "itemTooltip.jonky.atm_tooltip": "An ancient machine used for converting money."
 }
