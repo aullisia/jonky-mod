@@ -7,6 +7,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.Property;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
@@ -14,6 +15,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class ATMScreenHandler extends ScreenHandler {
     private final Inventory inventory;
+    final Slot inputSlot;
+    final Slot outputSlot;
+    final Property selectedRecipe = Property.create();
 
     // This constructor gets called on the client when the server wants it to open the screenHandler,
     // The client will call the other constructor with an empty Inventory and the screenHandler will automatically
@@ -31,16 +35,22 @@ public class ATMScreenHandler extends ScreenHandler {
         // some inventories do custom logic when a player opens it.
         inventory.onOpen(playerInventory.player);
 
-        // This will place the slot in the correct locations for a 3x3 Grid. The slots exist on both server and client!
-        // This will not render the background of the slots however, this is the Screens job
         int m;
         int l;
         // Our inventory
-        for (m = 0; m < 3; ++m) {
-            for (l = 0; l < 3; ++l) {
-                this.addSlot(new Slot(inventory, l + m * 3, 62 + l * 18, 17 + m * 18));
+        this.inputSlot = this.addSlot(new Slot(inventory, 1, 20, 33));
+        this.outputSlot = this.addSlot(new Slot(inventory, 2, 143, 33) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return false;
             }
-        }
+        });
+//        this.outputSlot = this.addSlot(new Slot(this.output, 1, 143, 33) {
+//        for (m = 0; m < 3; ++m) {
+//            for (l = 0; l < 3; ++l) {
+//                this.addSlot(new Slot(inventory, l + m * 3, 62 + l * 18, 17 + m * 18));
+//            }
+//        }
 
         // The player inventory
         for (m = 0; m < 3; ++m) {
@@ -52,7 +62,6 @@ public class ATMScreenHandler extends ScreenHandler {
         for (m = 0; m < 9; ++m) {
             this.addSlot(new Slot(playerInventory, m, 8 + m * 18, 142));
         }
-
     }
 
     @Override
