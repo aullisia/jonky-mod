@@ -1,9 +1,15 @@
 package jonky.modid.util;
 
 import com.github.crimsondawn45.fabricshieldlib.lib.event.ShieldBlockCallback;
+import com.github.crimsondawn45.fabricshieldlib.lib.event.ShieldDisabledCallback;
+import com.mojang.serialization.Codec;
+import jonky.modid.Jonky;
+import jonky.modid.component.ModComponents;
+import jonky.modid.item.ModItems;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -16,25 +22,33 @@ import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.util.Objects;
+import java.util.UUID;
+
 public class ShieldEvents {
+    // Enchantments
     private static ActionResult shieldThorns(LivingEntity defender, DamageSource source, float amount, Hand hand, ItemStack shield) {
         if (defender.isBlocking()) {
             World world = defender.getWorld();
+            ServerWorld serverWorld = Objects.requireNonNull(defender.getServer()).getWorld(world.getRegistryKey());
             DynamicRegistryManager registryManager = world.getRegistryManager();
             RegistryEntry<DamageType> damageTypeEntry = registryManager.getOrThrow(RegistryKeys.DAMAGE_TYPE).getOrThrow(DamageTypes.THORNS);
-            RegistryEntry<Enchantment>  enchantmentEntry = registryManager.getOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.THORNS);
-            RegistryEntry<Enchantment>  enchantmentEntryKnockback = registryManager.getOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.KNOCKBACK);
+            RegistryEntry<Enchantment>  enchantmentEntry = EnchantmentUtils.getEnchantmentEntry(Enchantments.THORNS, registryManager);
+            RegistryEntry<Enchantment>  enchantmentEntryKnockback = EnchantmentUtils.getEnchantmentEntry(Enchantments.THORNS, registryManager);
+
             int thornsLevel = EnchantmentHelper.getLevel(enchantmentEntry, shield);
             if (thornsLevel > 0 && source.getAttacker() instanceof LivingEntity attacker && !world.isClient) {
                 if (defender.getRandom().nextFloat() < 0.15F * thornsLevel) {
                     // Apply Thorns damage (random 1-4)
                     float thornsDamage = 1.0F + defender.getRandom().nextInt(4);
-                    attacker.damage((ServerWorld) world, new DamageSource(damageTypeEntry), thornsDamage);
+                    attacker.damage(serverWorld, new DamageSource(damageTypeEntry), thornsDamage);
 
                     // Knockback effect
                     if(EnchantmentHelper.getLevel(enchantmentEntryKnockback, shield) <= 0)
@@ -55,8 +69,9 @@ public class ShieldEvents {
         if (defender.isBlocking()) {
             World world = defender.getWorld();
             DynamicRegistryManager registryManager = world.getRegistryManager();
-            RegistryEntry<Enchantment>  enchantmentEntry = registryManager.getOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.KNOCKBACK);
+            RegistryEntry<Enchantment>  enchantmentEntry = EnchantmentUtils.getEnchantmentEntry(Enchantments.KNOCKBACK, registryManager);
             int knockbackLevel = EnchantmentHelper.getLevel(enchantmentEntry, shield);
+
             if (knockbackLevel > 0 && source.getAttacker() instanceof LivingEntity attacker && !world.isClient) {
                 if (attacker.getType() == EntityType.WARDEN) {
                     return ActionResult.PASS;
@@ -104,11 +119,57 @@ public class ShieldEvents {
 
             }
         }
+
+        return ActionResult.PASS;
+    }
+
+    // Heavy shield
+    private static ActionResult heavyShieldEnergy(LivingEntity defender, DamageSource source, float amount, Hand hand, ItemStack shield) {
+        if (defender.isBlocking()) {
+            // Setting last attacker
+            Entity attacker = source.getAttacker();
+            assert attacker != null;
+            shield.set(ModComponents.LAST_ATTACKER_COMPONENT, attacker.getId());
+
+            // Shield energy
+            Integer shieldEnergy = shield.get(ModComponents.HEAVY_SHIELD_ENERGY_COMPONENT);
+            if(shieldEnergy == null) {shieldEnergy = 0; }
+            shield.set(ModComponents.HEAVY_SHIELD_ENERGY_COMPONENT, ++shieldEnergy);
+            Jonky.LOGGER.warn(String.valueOf(++shieldEnergy));
+        }
+
+        return ActionResult.PASS;
+    }
+
+    private static ActionResult heavyShieldSurge(PlayerEntity defender, Hand hand, ItemStack shield) {
+        World world = Objects.requireNonNull(defender.getWorld());
+        ServerWorld serverWorld = Objects.requireNonNull(defender.getServer()).getWorld(world.getRegistryKey());
+
+        if(shield.getItem() == ModItems.HEAVY_SHIELD && !world.isClient) {
+            DynamicRegistryManager registryManager = world.getRegistryManager();
+            RegistryEntry<DamageType> damageTypeEntry = registryManager.getOrThrow(RegistryKeys.DAMAGE_TYPE).getOrThrow(DamageTypes.THORNS);
+
+            assert serverWorld != null;
+            Integer attackerId = shield.get(ModComponents.LAST_ATTACKER_COMPONENT);
+            if(attackerId == null) return ActionResult.PASS;
+            Entity attacker = serverWorld.getEntityById(attackerId);
+            assert attacker != null;
+
+            Integer shieldEnergy = shield.get(ModComponents.HEAVY_SHIELD_ENERGY_COMPONENT);
+            shield.set(ModComponents.HEAVY_SHIELD_ENERGY_COMPONENT, 0);
+            if(shieldEnergy == null) {shieldEnergy = 0; }
+            float damageAmount = (float) (3 * (Math.pow(1.5, shieldEnergy) - 1));
+            defender.playSound(SoundEvents.ITEM_MACE_SMASH_GROUND_HEAVY, 2f, 0.7f); // Sound doesnt play?
+            attacker.damage(serverWorld, new DamageSource(damageTypeEntry), damageAmount);
+        }
+
         return ActionResult.PASS;
     }
 
     public static void registerShieldEvents() {
         ShieldBlockCallback.EVENT.register(ShieldEvents::shieldThorns);
         ShieldBlockCallback.EVENT.register(ShieldEvents::shieldKnockback);
+        ShieldDisabledCallback.EVENT.register(ShieldEvents::heavyShieldSurge);
+        ShieldBlockCallback.EVENT.register(ShieldEvents::heavyShieldEnergy);
     }
 }
