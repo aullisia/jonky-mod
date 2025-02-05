@@ -4,10 +4,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import jonky.modid.Jonky;
 import jonky.modid.util.BanknoteUtils;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -17,6 +19,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.minecraft.util.math.ColorHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,16 +38,9 @@ public class ATMScreen extends HandledScreen<ATMScreenHandler> {
     private static final Identifier RECIPE_HIGHLIGHTED_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe_highlighted");
     private static final Identifier RECIPE_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe");
 
-    private static final Map<Integer, ItemStack> itemList = new HashMap<>();
-    static {
-        itemList.put(1, BanknoteUtils.createBanknoteStack(5, 1));
-        itemList.put(2, BanknoteUtils.createBanknoteStack(10, 1));
-        itemList.put(3, BanknoteUtils.createBanknoteStack(20, 1));
-        itemList.put(4, BanknoteUtils.createBanknoteStack(50, 1));
-        itemList.put(5, BanknoteUtils.createBanknoteStack(100, 1));
-        itemList.put(6, BanknoteUtils.createBanknoteStack(200, 1));
-        itemList.put(7, BanknoteUtils.createBanknoteStack(500, 1));
-    }
+    private int selectedButtonId = -1; // -1 means none selected.
+
+    private int remaningOutput = 320;
 
     public ATMScreen(ATMScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -60,20 +56,85 @@ public class ATMScreen extends HandledScreen<ATMScreenHandler> {
         context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, x, y, 0.0F, 0.0F, backgroundWidth, backgroundHeight, 256, 256);
         // context.drawTexture(RenderLayer::getGuiTextured, this.texture, this.x, this.y, 0.0F, 0.0F, this.backgroundWidth, this.backgroundHeight, 256, 256); // ForgingScreen.java
 
-        // Buttons
-        this.addDrawableChild(ButtonWidget.builder(Text.literal("Btn"), buttonWidget -> {
+//        this.addDrawableChild(ButtonWidget.builder(Text.literal("Btn"), buttonWidget -> {
+//
+//        }).dimensions(this.width / 2 - 100, 196, 98, 20).build());
 
-        }).dimensions(this.width / 2 - 100, 196, 98, 20).build());
-
-        int l = this.x + 52;
+        // Buttons for banknotes
+        int l = this.x + 56;
         int m = this.y + 14;
 
-        ItemStack stack = BanknoteUtils.createBanknoteStack(20, 1);
-        context.drawItem(stack, l, m);
+        renderRecipeBackground(context, mouseX, mouseY, l, m);
+        renderRecipeIcons(context, l, m);
+
+        // Text for remaining money in the machine (not in output slot)
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        context.drawText(textRenderer, "+" + remaningOutput, this.x + 140, this.x - 30, ColorHelper.getArgb(139,139,139), false);
+
+//        ItemStack stack = BanknoteUtils.createBanknoteStack(20, 1);
+//        context.drawItem(stack, l, m);
 
         // context.drawItem(slotDisplay.getFirst(contextParameterMap), k, m); // StonecutterScreen.java
 
         //this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).dimensions(this.width / 2 - 100, 196, 98, 20).build());
+    }
+
+    private void renderRecipeBackground(DrawContext context, int mouseX, int mouseY, int startX, int startY) {
+        int index = 0;
+        // You might want to iterate in order (e.g., sorted by key) if order matters:
+        Map<Integer, ItemStack> itemList = BanknoteUtils.ATMItemList;
+        List<Integer> sortedKeys = new ArrayList<>(itemList.keySet());
+        sortedKeys.sort(Integer::compare);
+
+        for (Integer buttonId : sortedKeys) {
+            // Calculate grid position (here using 4 icons per row)
+            int posX = startX + (index % 4) * 16;
+            int posY = startY + (index / 4) * 16; // Change 16 to 18 if you want a taller background like stonecutter.
+
+            // Choose which background texture to use
+            Identifier background = RECIPE_TEXTURE;
+            if (buttonId == selectedButtonId) {
+                background = RECIPE_SELECTED_TEXTURE;
+            } else if (mouseX >= posX && mouseY >= posY && mouseX < posX + 16 && mouseY < posY + 16) {
+                background = RECIPE_HIGHLIGHTED_TEXTURE;
+            }
+
+            // Draw the background.
+            // (Note: In StonecutterScreen the backgrounds are drawn with a slight vertical offset.
+            // Adjust the y coordinate or height as needed.)
+            context.drawGuiTexture(RenderLayer::getGuiTextured, background, posX, posY, 16, 16);
+
+            index++;
+        }
+    }
+
+    private void renderRecipeIcons (DrawContext context, int startX, int startY) {
+        int index = 0;
+        Map<Integer, ItemStack> itemList = BanknoteUtils.ATMItemList;
+        List<Integer> sortedKeys = new ArrayList<>(itemList.keySet());
+        sortedKeys.sort(Integer::compare);
+
+        for (Integer buttonId : sortedKeys) {
+            // Calculate grid position
+            int posX = startX + (index % 4) * 16;
+            int posY = startY + (index / 4) * 16;
+
+            // Draw the item icon (the item from your hashmap)
+            ItemStack itemStack = itemList.get(buttonId);
+            context.drawItem(itemStack, posX, posY);
+
+            index++;
+        }
+//        for (Map.Entry<Integer, ItemStack> entry : itemList.entrySet()) {
+//            Integer buttonId = entry.getKey();
+//            ItemStack itemStack = entry.getValue();
+//            context.drawItem(itemStack, x, y);
+//            x += 16;
+//            if(this.x + 52 + 16 * 4 <= x) {
+//                y += 16;
+//                x = this.x + 52;
+//            }
+//        }
     }
 
     @Override
@@ -90,39 +151,73 @@ public class ATMScreen extends HandledScreen<ATMScreenHandler> {
         titleX = (backgroundWidth - textRenderer.getWidth(title)) / 2;
     }
 
+    private void sendButtonPressPacket(int id) {
+        assert this.client != null;
+        assert this.client.interactionManager != null;
+        this.client.interactionManager.clickButton(this.handler.syncId, id);
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (isMouseOverItem(mouseX, mouseY)) {
-            // Play click sound
-            MinecraftClient.getInstance().getSoundManager().play(
-                    PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F)
-            );
-            // Handle the click action here (e.g., send packet to server)
-            Jonky.LOGGER.warn("Item button clicked!");
-            return true;
+        int startX = this.x + 56;
+        int startY = this.y + 14;
+        int index = 0;
+        Map<Integer, ItemStack> itemList = BanknoteUtils.ATMItemList;
+        List<Integer> sortedKeys = new ArrayList<>(itemList.keySet());
+        sortedKeys.sort(Integer::compare);
+
+        for (Integer buttonId : sortedKeys) {
+            int posX = startX + (index % 4) * 16;
+            int posY = startY + (index / 4) * 16;
+
+            if (mouseX >= posX && mouseX < posX + 16 && mouseY >= posY && mouseY < posY + 16) {
+                // Set the clicked button as selected, play sound, and do any other action
+                selectedButtonId = buttonId;
+                MinecraftClient.getInstance().getSoundManager().play(
+                        PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F)
+                );
+//                Jonky.LOGGER.warn("Item button " + buttonId + " clicked!");
+                sendButtonPressPacket(buttonId);
+                return true;
+            }
+            index++;
         }
         return super.mouseClicked(mouseX, mouseY, button);
+//        if (isMouseOverItem(mouseX, mouseY)) {
+//            // Play click sound
+//            MinecraftClient.getInstance().getSoundManager().play(
+//                    PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F)
+//            );
+//            // Handle the click action here (e.g., send packet to server)
+//            Jonky.LOGGER.warn("Item button clicked!");
+//            return true;
+//        }
+//        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     protected void drawMouseoverTooltip(DrawContext context, int mouseX, int mouseY) {
         super.drawMouseoverTooltip(context, mouseX, mouseY);
-        if (isMouseOverItem(mouseX, mouseY)) {
-            ItemStack stack = BanknoteUtils.createBanknoteStack(20, 1);
-            context.drawItemTooltip(this.textRenderer, stack, mouseX, mouseY);
+
+        int startX = this.x + 56;
+        int startY = this.y + 14;
+        int index = 0;
+        Map<Integer, ItemStack> itemList = BanknoteUtils.ATMItemList;
+        List<Integer> sortedKeys = new ArrayList<>(itemList.keySet());
+        sortedKeys.sort(Integer::compare);
+
+        // Iterate over the buttons and check if the mouse is over one.
+        for (Integer buttonId : sortedKeys) {
+            int posX = startX + (index % 4) * 16;
+            int posY = startY + (index / 4) * 16;
+            if (mouseX >= posX && mouseX < posX + 16 && mouseY >= posY && mouseY < posY + 16) {
+                // Get the corresponding ItemStack and draw its tooltip.
+                ItemStack stack = itemList.get(buttonId);
+                context.drawItemTooltip(this.textRenderer, stack, mouseX, mouseY);
+                // Since icons do not overlap, we can exit after drawing one tooltip.
+                break;
+            }
+            index++;
         }
-    }
-
-    private boolean isMouseOverItem(double mouseX, double mouseY) {
-        int l = this.x + 52;
-        int m = this.y + 14;
-
-        // Calculate item bounds relative to the GUI
-        int itemX = l;
-        int itemY = m;
-        int itemWidth = 16; // Default item rendering width
-        int itemHeight = 16; // Default item rendering height
-        return mouseX >= itemX && mouseX < itemX + itemWidth
-                && mouseY >= itemY && mouseY < itemY + itemHeight;
     }
 }

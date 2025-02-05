@@ -1,7 +1,10 @@
 package jonky.modid.block.custom.ATM;
 
 import jonky.modid.Jonky;
+import jonky.modid.component.ModComponents;
+import jonky.modid.item.ModItems;
 import jonky.modid.screen.ModScreens;
+import jonky.modid.util.BanknoteUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -38,7 +41,12 @@ public class ATMScreenHandler extends ScreenHandler {
         int m;
         int l;
         // Our inventory
-        this.inputSlot = this.addSlot(new Slot(inventory, 1, 20, 33));
+        this.inputSlot = this.addSlot(new Slot(inventory, 1, 20, 33){
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return stack.getItem() == ModItems.BANKNOTE;
+            }
+        });
         this.outputSlot = this.addSlot(new Slot(inventory, 2, 143, 33) {
             @Override
             public boolean canInsert(ItemStack stack) {
@@ -67,6 +75,18 @@ public class ATMScreenHandler extends ScreenHandler {
     @Override
     public boolean canUse(PlayerEntity player) {
         return this.inventory.canPlayerUse(player);
+    }
+
+    @Override
+    public boolean onButtonClick(PlayerEntity player, int id) {
+        ItemStack selectedBanknote = BanknoteUtils.ATMItemList.get(id);
+        Integer selectedBanknoteValue = selectedBanknote.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
+        if(selectedBanknoteValue == null) return false;
+        Jonky.LOGGER.warn("Selected Banknote value: " + selectedBanknoteValue);
+        // Conversion logic
+        this.outputSlot.setStackNoCallbacks(BanknoteUtils.createBanknoteStack(5,128));
+
+        return true;
     }
 
     // Shift + Player Inv Slot
