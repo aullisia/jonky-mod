@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
@@ -19,6 +20,25 @@ import org.jetbrains.annotations.Nullable;
 
 public class ATMBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(9, ItemStack.EMPTY);
+    private int containedJonky = 0;
+
+    private final PropertyDelegate propertyDelegate = new PropertyDelegate() {
+        @Override
+        public int get(int index) {
+            return containedJonky;
+        }
+
+        @Override
+        public void set(int index, int value) {
+            containedJonky = value;
+        }
+
+        //this is supposed to return the amount of integers you have in your delegate, in our example only one
+        @Override
+        public int size() {
+            return 1;
+        }
+    };
 
     public ATMBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ATM_BLOCK_ENTITY, pos, state);
@@ -36,7 +56,7 @@ public class ATMBlockEntity extends BlockEntity implements NamedScreenHandlerFac
 
     @Override
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new ATMScreenHandler(syncId, playerInventory, this);
+        return new ATMScreenHandler(syncId, playerInventory, this, propertyDelegate);
     }
 
     @Override

@@ -38,12 +38,13 @@ public class ATMScreen extends HandledScreen<ATMScreenHandler> {
     private static final Identifier RECIPE_HIGHLIGHTED_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe_highlighted");
     private static final Identifier RECIPE_TEXTURE = Identifier.ofVanilla("container/stonecutter/recipe");
 
-    private int selectedButtonId = -1; // -1 means none selected.
+    ATMScreenHandler  screenHandler;
 
-    private int remaningOutput = 320;
+    private int selectedButtonId = -1; // -1 means none selected.
 
     public ATMScreen(ATMScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
+        screenHandler = (ATMScreenHandler) handler;
     }
 
     @Override
@@ -67,9 +68,9 @@ public class ATMScreen extends HandledScreen<ATMScreenHandler> {
         renderRecipeBackground(context, mouseX, mouseY, l, m);
         renderRecipeIcons(context, l, m);
 
-        // Text for remaining money in the machine (not in output slot)
+        // Render amount of Jonky in the machine
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        context.drawText(textRenderer, "+" + remaningOutput, this.x + 140, this.x - 30, ColorHelper.getArgb(139,139,139), false);
+        context.drawText(textRenderer, Integer.toString(screenHandler.getStoredJonky()), this.x + 140, this.x - 30, ColorHelper.getArgb(139,139,139), false);
 
 //        ItemStack stack = BanknoteUtils.createBanknoteStack(20, 1);
 //        context.drawItem(stack, l, m);
