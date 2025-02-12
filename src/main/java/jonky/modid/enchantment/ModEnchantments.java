@@ -46,9 +46,6 @@ public class ModEnchantments {
 
     private static void modifyEnchantments() {
         EnchantmentEvents.ALLOW_ENCHANTING.register((enchantment, target, enchantingContext) -> {
-            if (enchantment == Enchantments.THORNS && target.getItem() == Items.SHIELD) {
-                return TriState.TRUE; // Allow enchanting
-            }
             if (enchantment == Enchantments.KNOCKBACK && target.getItem() == Items.SHIELD) {
                 return TriState.TRUE; // Allow enchanting
             }

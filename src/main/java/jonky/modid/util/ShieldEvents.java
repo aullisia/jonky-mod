@@ -3,6 +3,7 @@ package jonky.modid.util;
 import com.github.crimsondawn45.fabricshieldlib.lib.event.ShieldBlockCallback;
 import com.github.crimsondawn45.fabricshieldlib.lib.event.ShieldDisabledCallback;
 import com.mojang.serialization.Codec;
+import com.terraformersmc.modmenu.util.mod.Mod;
 import jonky.modid.Jonky;
 import jonky.modid.component.ModComponents;
 import jonky.modid.item.ModItems;
@@ -34,37 +35,6 @@ import java.util.UUID;
 
 public class ShieldEvents {
     // Enchantments
-    private static ActionResult shieldThorns(LivingEntity defender, DamageSource source, float amount, Hand hand, ItemStack shield) {
-        if (defender.isBlocking()) {
-            World world = defender.getWorld();
-            ServerWorld serverWorld = Objects.requireNonNull(defender.getServer()).getWorld(world.getRegistryKey());
-            DynamicRegistryManager registryManager = world.getRegistryManager();
-            RegistryEntry<DamageType> damageTypeEntry = registryManager.getOrThrow(RegistryKeys.DAMAGE_TYPE).getOrThrow(DamageTypes.THORNS);
-            RegistryEntry<Enchantment>  enchantmentEntry = EnchantmentUtils.getEnchantmentEntry(Enchantments.THORNS, registryManager);
-            RegistryEntry<Enchantment>  enchantmentEntryKnockback = EnchantmentUtils.getEnchantmentEntry(Enchantments.THORNS, registryManager);
-
-            int thornsLevel = EnchantmentHelper.getLevel(enchantmentEntry, shield);
-            if (thornsLevel > 0 && source.getAttacker() instanceof LivingEntity attacker && !world.isClient) {
-                if (defender.getRandom().nextFloat() < 0.15F * thornsLevel) {
-                    // Apply Thorns damage (random 1-4)
-                    float thornsDamage = 1.0F + defender.getRandom().nextInt(4);
-                    attacker.damage(serverWorld, new DamageSource(damageTypeEntry), thornsDamage);
-
-                    // Knockback effect
-                    if(EnchantmentHelper.getLevel(enchantmentEntryKnockback, shield) <= 0)
-                        attacker.takeKnockback(0.5, defender.getX() - attacker.getX(), defender.getZ() - attacker.getZ());
-
-                    // Reduce shield durability
-                    EquipmentSlot slot = (hand == Hand.MAIN_HAND) ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-                    shield.damage(2, defender, slot);
-//                    Jonky.LOGGER.info("{}'s Thorns {} activated, damaging {} for {} HP",
-//                            defender.getName().getString(), thornsLevel, attacker.getName().getString(), thornsDamage);
-                }
-            }
-        }
-        return ActionResult.PASS;
-    }
-
     private static ActionResult shieldKnockback(LivingEntity defender, DamageSource source, float amount, Hand hand, ItemStack shield) {
         if (defender.isBlocking()) {
             World world = defender.getWorld();
@@ -126,6 +96,7 @@ public class ShieldEvents {
     // Heavy shield
     private static ActionResult heavyShieldEnergy(LivingEntity defender, DamageSource source, float amount, Hand hand, ItemStack shield) {
         if (defender.isBlocking()) {
+            if(shield.getItem() != ModItems.HEAVY_SHIELD) return ActionResult.PASS;
             // Setting last attacker
             Entity attacker = source.getAttacker();
             assert attacker != null;
@@ -167,7 +138,6 @@ public class ShieldEvents {
     }
 
     public static void registerShieldEvents() {
-        ShieldBlockCallback.EVENT.register(ShieldEvents::shieldThorns);
         ShieldBlockCallback.EVENT.register(ShieldEvents::shieldKnockback);
         ShieldDisabledCallback.EVENT.register(ShieldEvents::heavyShieldSurge);
         ShieldBlockCallback.EVENT.register(ShieldEvents::heavyShieldEnergy);
