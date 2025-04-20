@@ -17,7 +17,7 @@ import java.util.function.Function;
 public class ModBlocks {
     public static final Block ATM_BLOCK = registerBlock("atm_block",
             // Create block WITH registry key in settings
-            settings -> new ATMBlock(settings),
+            settings -> new ATMBlock(settings.strength(4.0f, 6.0f).requiresTool()),
             true
     );
 

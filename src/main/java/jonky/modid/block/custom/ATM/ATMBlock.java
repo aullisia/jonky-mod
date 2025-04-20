@@ -2,6 +2,9 @@ package jonky.modid.block.custom.ATM;
 
 import com.mojang.serialization.MapCodec;
 import jonky.modid.Jonky;
+import jonky.modid.block.ModBlocks;
+import jonky.modid.item.ModItems;
+import jonky.modid.util.BanknoteUtils;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
@@ -13,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
@@ -22,6 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ATMBlock extends BlockWithEntity {
@@ -66,10 +71,43 @@ public class ATMBlock extends BlockWithEntity {
             if (blockEntity instanceof ATMBlockEntity atmBlockEntity) {
                 ItemScatterer.spawn(world, pos, (Inventory) atmBlockEntity); // Casting hopefully works?
                 // update comparators
-                world.updateComparators(pos,this);
+                world.updateComparators(pos, this);
             }
             super.onStateReplaced(state, world, pos, newState, moved);
         }
+    }
+
+    // Drops
+    @Override
+    public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
+        if (blockEntity instanceof ATMBlockEntity atmBlockEntity) {
+            int jonky = atmBlockEntity.getContainedJonky();
+            Jonky.LOGGER.warn("ATM Block broken, contained Jonky: {}", jonky);
+
+            List<ItemStack> jonkyStackList = new ArrayList<>();
+            int[] values = {500, 200, 100, 50, 20, 10, 5};
+
+            for (int value : values) {
+                int count = jonky / value;
+                jonky %= value;
+
+                while (count > 0) {
+                    int stackSize = Math.min(count, 64);
+                    jonkyStackList.add(BanknoteUtils.createBanknoteStack(value, stackSize));
+                    count -= stackSize;
+                }
+            }
+
+            for (ItemStack stack : jonkyStackList) {
+                dropStack(world, pos, stack);
+            }
+
+            dropStack(world, pos, new ItemStack(ModBlocks.ATM_BLOCK.asItem(), 1));
+        }
+
+        player.incrementStat(Stats.MINED.getOrCreateStat(this));
+        player.addExhaustion(0.005F);
+        dropStacks(state, world, pos, blockEntity, player, tool);
     }
 
     @Override

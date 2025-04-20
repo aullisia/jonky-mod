@@ -5,6 +5,7 @@ import jonky.modid.component.ModComponents;
 import jonky.modid.item.ModItems;
 import jonky.modid.screen.ModScreens;
 import jonky.modid.util.BanknoteUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -12,6 +13,7 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.*;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import org.jetbrains.annotations.Nullable;
@@ -94,6 +96,45 @@ public class ATMScreenHandler extends ScreenHandler {
         }
     }
 
+    // offerOrDropStack Copied from ScreenHandler.class
+    private static void offerOrDropStack(PlayerEntity player, ItemStack stack) {
+        boolean bl;
+        boolean var10000;
+        label27: {
+            bl = player.isRemoved() && player.getRemovalReason() != Entity.RemovalReason.CHANGED_DIMENSION;
+            if (player instanceof ServerPlayerEntity serverPlayerEntity) {
+                if (serverPlayerEntity.isDisconnected()) {
+                    var10000 = true;
+                    break label27;
+                }
+            }
+
+            var10000 = false;
+        }
+
+        boolean bl2 = var10000;
+        if (!bl && !bl2) {
+            if (player instanceof ServerPlayerEntity) {
+                player.getInventory().offerOrDrop(stack);
+            }
+        } else {
+            player.dropItem(stack, false);
+        }
+
+    }
+
+    @Override
+    public void onClosed(PlayerEntity player) {
+        if (player instanceof ServerPlayerEntity) {
+            outputSlot.setStack(ItemStack.EMPTY);
+            ItemStack itemStack = this.getCursorStack();
+            if (!itemStack.isEmpty()) {
+                offerOrDropStack(player, itemStack);
+                this.setCursorStack(ItemStack.EMPTY);
+            }
+        }
+    }
+
     @Override
     public boolean canUse(PlayerEntity player) {
         return this.inventory.canPlayerUse(player);
@@ -140,26 +181,48 @@ public class ATMScreenHandler extends ScreenHandler {
     // Shift + Player Inv Slot
     @Override
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
-        ItemStack newStack = ItemStack.EMPTY;
+        ItemStack movedStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
         if (slot != null && slot.hasStack()) {
-            ItemStack originalStack = slot.getStack();
-            newStack = originalStack.copy();
-            if (invSlot < this.inventory.size()) {
-                if (!this.insertItem(originalStack, this.inventory.size(), this.slots.size(), true)) {
+            ItemStack original = slot.getStack();
+            movedStack = original.copy();
+
+            // 1) If we’re shift‑clicking the **output slot**, withdraw money
+            if (slot == this.outputSlot) {
+                // a) subtract its total Jonky value
+                Integer noteValue = original.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
+                if (noteValue != null) {
+                    int total = noteValue * original.getCount();
+                    setStoredJonky(getStoredJonky() - total);
+                }
+                // b) move into the player inventory
+                if (!this.insertItem(original, this.inventory.size(), this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.insertItem(originalStack, 0, this.inventory.size(), false)) {
-                return ItemStack.EMPTY;
+                slot.markDirty();
+                return movedStack;
             }
 
-            if (originalStack.isEmpty()) {
+            // 2) Otherwise, vanilla behavior: container → player, or player → container
+            if (invSlot < this.inventory.size()) {
+                // container to player
+                if (!this.insertItem(original, this.inventory.size(), this.slots.size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else {
+                // player to container
+                if (!this.insertItem(original, 0, this.inventory.size(), false)) {
+                    return ItemStack.EMPTY;
+                }
+            }
+
+            // 3) clean up
+            if (original.isEmpty()) {
                 slot.setStack(ItemStack.EMPTY);
             } else {
                 slot.markDirty();
             }
         }
-
-        return newStack;
+        return movedStack;
     }
 }

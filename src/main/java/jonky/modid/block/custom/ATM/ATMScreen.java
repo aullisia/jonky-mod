@@ -69,8 +69,9 @@ public class ATMScreen extends HandledScreen<ATMScreenHandler> {
         renderRecipeIcons(context, l, m);
 
         // Render amount of Jonky in the machine
+        String storedJonky = Integer.toString(screenHandler.getStoredJonky());
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        context.drawText(textRenderer, Integer.toString(screenHandler.getStoredJonky()), this.x + 140, this.x - 30, ColorHelper.getArgb(139,139,139), false);
+        context.drawText(textRenderer, storedJonky, l + ((92 + 3) - (storedJonky.length() * 3)), m + 45, ColorHelper.getArgb(139,139,139), false);
 
 //        ItemStack stack = BanknoteUtils.createBanknoteStack(20, 1);
 //        context.drawItem(stack, l, m);

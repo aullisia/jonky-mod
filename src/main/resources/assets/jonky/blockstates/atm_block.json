@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "jonky:block/atm"
+      "model": "jonky:block/atm_block"
     }
   }
 }

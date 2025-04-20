@@ -22,6 +22,10 @@ public class ATMBlockEntity extends BlockEntity implements NamedScreenHandlerFac
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(9, ItemStack.EMPTY);
     private int containedJonky = 0;
 
+    public int getContainedJonky() {
+        return containedJonky;
+    }
+
     private final PropertyDelegate propertyDelegate = new PropertyDelegate() {
         @Override
         public int get(int index) {
@@ -62,11 +66,13 @@ public class ATMBlockEntity extends BlockEntity implements NamedScreenHandlerFac
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.readNbt(nbt, registryLookup);
+        containedJonky = nbt.getInt("contained_jonky");
         Inventories.readNbt(nbt, this.inventory, registryLookup);
     }
 
     @Override
     public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
+        nbt.putInt("contained_jonky", containedJonky);
         super.writeNbt(nbt, registries);
         Inventories.writeNbt(nbt, this.inventory, registries);
     }
