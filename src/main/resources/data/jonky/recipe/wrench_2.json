@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " #",
+    "/g"
+  ],
+  "key": {
+    "#": "minecraft:leather",
+    "/": "minecraft:stick",
+    "g": "minecraft:gold_ingot"
+  },
+  "result": {
+    "id": "jonky:wrench",
+    "count": 1
+  },
+  "group": "wrench"
+}

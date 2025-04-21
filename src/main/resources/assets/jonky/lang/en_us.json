@@ -14,5 +14,6 @@
   "item.jonky.heavy_shield": "Heavy Shield",
   "item.jonky.atm_block": "Automated Teller Machine",
   "block.jonky.atm_block": "Automated Teller Machine",
-  "itemTooltip.jonky.atm_tooltip": "A machine used for converting money."
+  "itemTooltip.jonky.atm_tooltip": "A machine used for converting money.",
+  "item.jonky.wrench": "Wrench"
 }

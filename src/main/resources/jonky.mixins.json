@@ -4,12 +4,16 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AnvilScreenHandlerMixin",
-    "BankerVillagerEntityMixin"
+    "BankerVillagerEntityMixin",
+    "MinecartControllerAccessor",
+    "AbstractMinecartEntityMixin",
+    "ExperimentalMinecartControllerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "client": [
-    "AnvilScreenMixin"
+    "AnvilScreenMixin",
+    "MouseMixin"
   ]
 }
