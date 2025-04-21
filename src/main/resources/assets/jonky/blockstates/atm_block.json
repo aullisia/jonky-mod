@@ -1,7 +1,23 @@
 {
   "variants": {
-    "": {
-      "model": "jonky:block/atm_block"
+    "facing=north": {
+      "model": "jonky:block/atm_block",
+      "uvlock": true
+    },
+    "facing=east": {
+      "model": "jonky:block/atm_block",
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=south": {
+      "model": "jonky:block/atm_block",
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=west": {
+      "model": "jonky:block/atm_block",
+      "y": 270,
+      "uvlock": true
     }
   }
 }

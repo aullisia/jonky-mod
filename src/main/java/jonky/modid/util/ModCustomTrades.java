@@ -19,6 +19,7 @@ import net.minecraft.village.TradedItem;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.World;
 
+import java.util.Optional;
 import java.util.Random;
 
 public class ModCustomTrades {
@@ -36,7 +37,8 @@ public class ModCustomTrades {
 
         TradeOfferHelper.registerVillagerOffers(VillagerProfession.LIBRARIAN, 1, factories -> {
             factories.add((entity, random) -> new TradeOffer(
-                    new TradedItem(Items.DIAMOND, rand.nextInt(11)+10),
+                    new TradedItem(Items.EMERALD, rand.nextInt(11)+10),
+                    Optional.of(new TradedItem(Items.BOOK, 1)),
                     createEnchantedBookStack(ModEnchantments.FORSAKING ,1, entity),
                     12, 1, 0.02f
             ));
