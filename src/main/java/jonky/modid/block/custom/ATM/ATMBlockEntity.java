@@ -7,13 +7,17 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.text.Text;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -64,16 +68,21 @@ public class ATMBlockEntity extends BlockEntity implements NamedScreenHandlerFac
     }
 
     @Override
-    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        super.readNbt(nbt, registryLookup);
-        containedJonky = nbt.getInt("contained_jonky");
-        Inventories.readNbt(nbt, this.inventory, registryLookup);
+    public void onBlockReplaced(BlockPos pos, BlockState oldState) {
+        if (this.world != null) {
+            this.world.updateComparators(pos, oldState.getBlock());
+        }
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
-        nbt.putInt("contained_jonky", containedJonky);
-        super.writeNbt(nbt, registries);
-        Inventories.writeNbt(nbt, this.inventory, registries);
+    public void readData(ReadView view) {
+        containedJonky = view.getInt("contained_jonky", 0);
+        Inventories.readData(view, this.getItems());
+    }
+
+    @Override
+    public void writeData(WriteView view) {
+        view.putInt("contained_jonky", containedJonky);
+        Inventories.writeData(view, this.getItems());
     }
 }

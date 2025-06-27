@@ -71,25 +71,12 @@ public class ATMBlock extends BlockWithEntity {
         return ActionResult.SUCCESS;
     }
 
-    @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (state.getBlock() != newState.getBlock()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof ATMBlockEntity atmBlockEntity) {
-                ItemScatterer.spawn(world, pos, (Inventory) atmBlockEntity); // Casting hopefully works?
-                // update comparators
-                world.updateComparators(pos, this);
-            }
-            super.onStateReplaced(state, world, pos, newState, moved);
-        }
-    }
-
     // Drops
     @Override
     public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
         if (blockEntity instanceof ATMBlockEntity atmBlockEntity) {
             int jonky = atmBlockEntity.getContainedJonky();
-            Jonky.LOGGER.warn("ATM Block broken, contained Jonky: {}", jonky);
+            //Jonky.LOGGER.warn("ATM Block broken, contained Jonky: {}", jonky);
 
             List<ItemStack> jonkyStackList = new ArrayList<>();
             int[] values = {500, 200, 100, 50, 20, 10, 5};
@@ -127,10 +114,10 @@ public class ATMBlock extends BlockWithEntity {
         return ScreenHandler.calculateComparatorOutput(world.getBlockEntity(pos));
     }
 
-    @Override
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
-        tooltip.add(Text.translatable("itemTooltip." + Jonky.MOD_ID + ".atm_tooltip").formatted(Formatting.GRAY));
-    }
+//    @Override
+//    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
+//        tooltip.add(Text.translatable("itemTooltip." + Jonky.MOD_ID + ".atm_tooltip").formatted(Formatting.GRAY));
+//    }
 
     // Rotation placement
     @Override

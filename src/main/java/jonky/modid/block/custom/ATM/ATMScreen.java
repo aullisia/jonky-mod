@@ -5,7 +5,7 @@ import jonky.modid.Jonky;
 import jonky.modid.util.BanknoteUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.ShaderProgramKeys;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -49,37 +49,66 @@ public class ATMScreen extends HandledScreen<ATMScreenHandler> {
 
     @Override
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
-        context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, x, y, 0.0F, 0.0F, backgroundWidth, backgroundHeight, 256, 256);
-        // context.drawTexture(RenderLayer::getGuiTextured, this.texture, this.x, this.y, 0.0F, 0.0F, this.backgroundWidth, this.backgroundHeight, 256, 256); // ForgingScreen.java
+        int i = this.x;
+        int j = this.y;
 
-//        this.addDrawableChild(ButtonWidget.builder(Text.literal("Btn"), buttonWidget -> {
-//
-//        }).dimensions(this.width / 2 - 100, 196, 98, 20).build());
+        // Draw the base background texture
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i, j, 0.0F, 0.0F, this.backgroundWidth, this.backgroundHeight, 256, 256);
 
-        // Buttons for banknotes
+        // Coordinates for recipe icons/background
         int l = this.x + 56;
         int m = this.y + 14;
 
-        renderRecipeBackground(context, mouseX, mouseY, l, m);
-        renderRecipeIcons(context, l, m);
+        // Draw recipe slots and icons
+        this.renderRecipeBackground(context, mouseX, mouseY, l, m);
+        this.renderRecipeIcons(context, l, m);
 
-        // Render amount of Jonky in the machine
+        // Draw amount of Jonky in the machine
         String storedJonky = Integer.toString(screenHandler.getStoredJonky());
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        context.drawText(textRenderer, storedJonky, l + ((92 + 3) - (storedJonky.length() * 3)), m + 45, ColorHelper.getArgb(139,139,139), false);
-
-//        ItemStack stack = BanknoteUtils.createBanknoteStack(20, 1);
-//        context.drawItem(stack, l, m);
-
-        // context.drawItem(slotDisplay.getFirst(contextParameterMap), k, m); // StonecutterScreen.java
-
-        //this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).dimensions(this.width / 2 - 100, 196, 98, 20).build());
+        context.drawText(
+                textRenderer,
+                storedJonky,
+                l + ((92 + 3) - (storedJonky.length() * 3)),
+                m + 45,
+                ColorHelper.getArgb(139, 139, 139),
+                false
+        );
     }
+
+//    @Override
+//    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
+//        RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX);
+//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+//        RenderSystem.setShaderTexture(0, TEXTURE);
+//        int x = (width - backgroundWidth) / 2;
+//        int y = (height - backgroundHeight) / 2;
+//        context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, x, y, 0.0F, 0.0F, backgroundWidth, backgroundHeight, 256, 256);
+//        // context.drawTexture(RenderLayer::getGuiTextured, this.texture, this.x, this.y, 0.0F, 0.0F, this.backgroundWidth, this.backgroundHeight, 256, 256); // ForgingScreen.java
+//
+////        this.addDrawableChild(ButtonWidget.builder(Text.literal("Btn"), buttonWidget -> {
+////
+////        }).dimensions(this.width / 2 - 100, 196, 98, 20).build());
+//
+//        // Buttons for banknotes
+//        int l = this.x + 56;
+//        int m = this.y + 14;
+//
+//        renderRecipeBackground(context, mouseX, mouseY, l, m);
+//        renderRecipeIcons(context, l, m);
+//
+//        // Render amount of Jonky in the machine
+//        String storedJonky = Integer.toString(screenHandler.getStoredJonky());
+//        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+//        context.drawText(textRenderer, storedJonky, l + ((92 + 3) - (storedJonky.length() * 3)), m + 45, ColorHelper.getArgb(139,139,139), false);
+//
+////        ItemStack stack = BanknoteUtils.createBanknoteStack(20, 1);
+////        context.drawItem(stack, l, m);
+//
+//        // context.drawItem(slotDisplay.getFirst(contextParameterMap), k, m); // StonecutterScreen.java
+//
+//        //this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).dimensions(this.width / 2 - 100, 196, 98, 20).build());
+//    }
 
     private void renderRecipeBackground(DrawContext context, int mouseX, int mouseY, int startX, int startY) {
         int index = 0;
@@ -101,10 +130,7 @@ public class ATMScreen extends HandledScreen<ATMScreenHandler> {
                 background = RECIPE_HIGHLIGHTED_TEXTURE;
             }
 
-            // Draw the background.
-            // (Note: In StonecutterScreen the backgrounds are drawn with a slight vertical offset.
-            // Adjust the y coordinate or height as needed.)
-            context.drawGuiTexture(RenderLayer::getGuiTextured, background, posX, posY, 16, 16);
+            context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, background, posX, posY, 16, 16);
 
             index++;
         }

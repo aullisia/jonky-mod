@@ -31,7 +31,7 @@ import static jonky.modid.util.BanknoteUtils.createBanknoteStack;
 @Mixin(VillagerEntity.class)
 public class BankerVillagerEntityMixin {
     private static boolean isBanker (VillagerEntity villager) {
-        return villager.getVillagerData().getProfession().equals(ModVillagers.BANKER);
+        return villager.getVillagerData().profession().value().equals(ModVillagers.BANKER);
     }
 
     @Inject(method = "interactMob", at = @At("HEAD"))

@@ -1,0 +1,30 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.jonky.forsaking"
+  },
+  "effects": {
+    "minecraft:hit_block": [
+      {
+        "effect": {
+          "type": "jonky:forsaking"
+        }
+      }
+    ]
+  },
+  "exclusive_set": "minecraft:loyalty",
+  "max_cost": {
+    "base": 25,
+    "per_level_above_first": 9
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 5,
+    "per_level_above_first": 7
+  },
+  "slots": [
+    "hand"
+  ],
+  "supported_items": "#minecraft:enchantable/trident",
+  "weight": 5
+}

@@ -10,6 +10,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
@@ -23,7 +24,7 @@ public class ModVillagers {
 
     private static VillagerProfession registerProfession(String name, RegistryKey<PointOfInterestType> type) {
         return Registry.register(Registries.VILLAGER_PROFESSION, Identifier.of(Jonky.MOD_ID, name),
-                new VillagerProfession(name, entry -> entry.matchesKey(type), entry -> entry.matchesKey(type),
+                new VillagerProfession(Text.of(name), entry -> entry.matchesKey(type), entry -> entry.matchesKey(type),
                         ImmutableSet.of(), ImmutableSet.of(), SoundEvents.ENTITY_VILLAGER_WORK_SHEPHERD));
     }
 

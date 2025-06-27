@@ -5,6 +5,7 @@ import jonky.modid.component.ModComponents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ConsumableComponent;
 import net.minecraft.component.type.EquippableComponent;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
@@ -19,6 +20,7 @@ import net.minecraft.world.World;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import static jonky.modid.util.BanknoteUtils.createBanknoteStack;
 
@@ -119,8 +121,10 @@ public class BanknoteItem extends Item {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        Integer value = stack.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
+    public void appendTooltip(
+            ItemStack stack, Item.TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type
+    ){
+    Integer value = stack.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
         if (value == null) return;
 
         String key;
@@ -162,9 +166,9 @@ public class BanknoteItem extends Item {
         };
 
         if (!key.isEmpty()) {
-            tooltip.add(Text.translatable("item.banknote.amount.info." + key).formatted(format));
+            textConsumer.accept(Text.translatable("item.banknote.amount.info." + key).formatted(format));
         } else {
-            tooltip.add(Text.translatable("item.banknote.amount.info").formatted(format));
+            textConsumer.accept(Text.translatable("item.banknote.amount.info").formatted(format));
         }
     }
 }

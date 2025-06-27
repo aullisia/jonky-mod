@@ -67,13 +67,11 @@ public class ATMScreenHandler extends ScreenHandler {
 
             @Override
             public void onTakeItem(PlayerEntity player, ItemStack stack) {
-                int storedJonky = getStoredJonky();
-                int newStoredJonky = storedJonky - (selectedRecipe * stack.getCount());
-                if (newStoredJonky < 0) return;
-                setStoredJonky(newStoredJonky);
-
-                stack.onCraftByPlayer(player.getWorld(), player, stack.getCount());
+                deductStoredJonkyFromItem(stack);
+                stack.onCraftByPlayer(player, stack.getCount());
                 super.onTakeItem(player, stack);
+
+                refillOutputSlot();
             }
         });
 //        this.outputSlot = this.addSlot(new Slot(this.output, 1, 143, 33) {
@@ -157,12 +155,34 @@ public class ATMScreenHandler extends ScreenHandler {
         return propertyDelegate.get(0);
     }
 
+    private void refillOutputSlot() {
+        if (selectedRecipe > 0) {
+            int storedJonky = getStoredJonky();
+            int refillAmount = Math.min(storedJonky / selectedRecipe, 64);
+            if (refillAmount > 0) {
+                outputSlot.setStackNoCallbacks(
+                        BanknoteUtils.createBanknoteStack(selectedRecipe, refillAmount)
+                );
+            } else {
+                outputSlot.setStackNoCallbacks(ItemStack.EMPTY);
+            }
+        }
+    }
+
+    private void deductStoredJonkyFromItem(ItemStack stack) {
+        Integer noteValue = stack.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
+        if (noteValue != null) {
+            int total = noteValue * stack.getCount();
+            setStoredJonky(getStoredJonky() - total);
+        }
+    }
+
     @Override
     public boolean onButtonClick(PlayerEntity player, int id) {
         ItemStack selectedBanknote = BanknoteUtils.ATMItemList.get(id);
         Integer selectedBanknoteValue = selectedBanknote.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
         if(selectedBanknoteValue == null) return false;
-        Jonky.LOGGER.warn("Selected Banknote value: " + selectedBanknoteValue);
+        //Jonky.LOGGER.warn("Selected Banknote value: " + selectedBanknoteValue);
         // Conversion logic
 
         int storedJonky = getStoredJonky();
@@ -189,17 +209,12 @@ public class ATMScreenHandler extends ScreenHandler {
 
             // 1) If we’re shift‑clicking the **output slot**, withdraw money
             if (slot == this.outputSlot) {
-                // a) subtract its total Jonky value
-                Integer noteValue = original.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
-                if (noteValue != null) {
-                    int total = noteValue * original.getCount();
-                    setStoredJonky(getStoredJonky() - total);
-                }
-                // b) move into the player inventory
+                deductStoredJonkyFromItem(original);
                 if (!this.insertItem(original, this.inventory.size(), this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
                 slot.markDirty();
+                refillOutputSlot();
                 return movedStack;
             }
 

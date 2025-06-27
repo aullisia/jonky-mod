@@ -19,7 +19,7 @@ public class ModPoiTagProvider extends TagProvider<PointOfInterestType> {
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup registries) {
-        this.getOrCreateTagBuilder(PointOfInterestTypeTags.ACQUIRABLE_JOB_SITE)
+        this.getTagBuilder(PointOfInterestTypeTags.ACQUIRABLE_JOB_SITE)
                 .addOptional(Identifier.of(Jonky.MOD_ID, "bankerpoi"));
     }
 }
