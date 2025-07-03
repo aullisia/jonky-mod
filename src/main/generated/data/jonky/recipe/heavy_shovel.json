@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:heavy_core",
+  "base": "minecraft:netherite_shovel",
+  "result": {
+    "id": "jonky:heavy_shovel"
+  },
+  "template": "jonky:heavy_upgrade_smithing_template"
+}

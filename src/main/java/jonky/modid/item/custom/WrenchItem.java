@@ -2,7 +2,6 @@ package jonky.modid.item.custom;
 
 import jonky.modid.Jonky;
 import jonky.modid.network.ModNetwork;
-import jonky.modid.util.CustomSpeedAccessor;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BlocksAttacksComponent;
 import net.minecraft.component.type.ConsumableComponent;

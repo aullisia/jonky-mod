@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "nSn",
+    "nOn",
+    "nnn"
+  ],
+  "key": {
+    "n": "minecraft:netherite_ingot",
+    "S": "jonky:heavy_upgrade_smithing_template",
+    "O": "minecraft:oxidized_copper"
+  },
+  "result": {
+    "id": "jonky:heavy_upgrade_smithing_template",
+    "count": 2
+  }
+}

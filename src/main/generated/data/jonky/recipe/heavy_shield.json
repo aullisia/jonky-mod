@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:heavy_core",
+  "base": "minecraft:shield",
+  "result": {
+    "id": "jonky:heavy_shield"
+  },
+  "template": "jonky:heavy_upgrade_smithing_template"
+}

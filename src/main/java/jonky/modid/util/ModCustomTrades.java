@@ -35,13 +35,13 @@ public class ModCustomTrades {
     public static void registerCustomTrades() {
         Random rand = new Random();
 
-        TradeOfferHelper.registerVillagerOffers(VillagerProfession.LIBRARIAN, 1, factories -> {
-            factories.add((entity, random) -> new TradeOffer(
-                    new TradedItem(Items.EMERALD, rand.nextInt(11)+10),
-                    Optional.of(new TradedItem(Items.BOOK, 1)),
-                    createEnchantedBookStack(ModEnchantments.FORSAKING ,1, entity),
-                    12, 1, 0.02f
-            ));
-        });
+//        TradeOfferHelper.registerVillagerOffers(VillagerProfession.LIBRARIAN, 1, factories -> {
+//            factories.add((entity, random) -> new TradeOffer(
+//                    new TradedItem(Items.EMERALD, rand.nextInt(11)+10),
+//                    Optional.of(new TradedItem(Items.BOOK, 1)),
+//                    createEnchantedBookStack(ModEnchantments.FORSAKING ,1, entity),
+//                    12, 1, 0.02f
+//            ));
+//        });
     }
 }

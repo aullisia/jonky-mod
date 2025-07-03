@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:heavy_core",
+  "base": "minecraft:netherite_sword",
+  "result": {
+    "id": "jonky:heavy_greatsword"
+  },
+  "template": "jonky:heavy_upgrade_smithing_template"
+}

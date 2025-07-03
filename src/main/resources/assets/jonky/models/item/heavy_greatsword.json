@@ -1,0 +1,28 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "jonky:item/heavy_greatsword"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, -90, 50],
+      "translation": [0, 9.25, 1],
+      "scale": [1.5, 1.5, 1]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 90, -50],
+      "translation": [0, 9.25, 1],
+      "scale": [1.5, 1.5, 1]
+    },
+    "firstperson_righthand": {
+      "rotation": [-20, -90, 0],
+      "translation": [0, 2, 0],
+      "scale": [1.2, 1.2, 0.5]
+    },
+    "firstperson_lefthand": {
+      "rotation": [-20, 90, 0],
+      "translation": [0, 2, 0],
+      "scale": [1.2, 1.2, 0.5]
+    }
+  }
+}

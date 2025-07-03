@@ -1,7 +1,6 @@
 package jonky.modid;
 
-import jonky.modid.datagen.ModPoiTagProvider;
-import jonky.modid.datagen.ModRegistryDataGenerator;
+import jonky.modid.datagen.*;
 import jonky.modid.enchantment.ModEnchantments;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -15,6 +14,10 @@ public class JonkyDataGenerator implements DataGeneratorEntrypoint {
 
 		pack.addProvider(ModPoiTagProvider::new);
 		pack.addProvider(ModRegistryDataGenerator::new);
+		pack.addProvider(ModBlockTagProvider::new);
+		pack.addProvider(ModItemTagProvider::new);
+		pack.addProvider(ModModelProvider::new);
+		pack.addProvider(ModRecipeProvider::new);
 	}
 
 	@Override

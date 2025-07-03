@@ -11,9 +11,21 @@
   "entity.minecraft.villager.banker": "Banker",
   "block.jonky.atm": "Automated Teller Machine",
   "enchantment.jonky.forsaking": "§cCurse of Forsaking",
-  "item.jonky.heavy_shield": "Heavy Shield",
   "item.jonky.atm_block": "Automated Teller Machine",
   "block.jonky.atm_block": "Automated Teller Machine",
   "itemTooltip.jonky.atm_tooltip": "A machine used for converting money.",
-  "item.jonky.wrench": "Wrench"
+  "item.jonky.wrench": "Wrench",
+
+  "item.jonky.heavy_template.applies_to": "Netherite Equipment",
+  "item.jonky.heavy_template.ingredients": "Heavy Core",
+  "item.jonky.heavy_template.base_slot_description": "Add Netherite weapon, or tool",
+  "item.jonky.heavy_template.additions_slot_description": "Add Heavy Core",
+
+  "item.jonky.heavy_upgrade_smithing_template": "Heavy Core Upgrade",
+
+  "item.jonky.heavy_greatsword": "Greatsword",
+  "item.jonky.heavy_axe": "Heavy Axe",
+  "item.jonky.heavy_shovel": "Heavy Shovel",
+  "item.jonky.heavy_hoe": "Heavy Hoe",
+  "item.jonky.heavy_pickaxe": "Heavy Pickaxe"
 }
