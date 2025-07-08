@@ -2,8 +2,11 @@ package jonky.modid.block;
 
 import jonky.modid.Jonky;
 import jonky.modid.block.custom.ATM.ATMBlock;
+import jonky.modid.block.custom.CopperRail.CopperRailBlock;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.client.render.BlockRenderLayer;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -18,6 +21,11 @@ public class ModBlocks {
     public static final Block ATM_BLOCK = registerBlock("atm_block",
             // Create block WITH registry key in settings
             settings -> new ATMBlock(settings.strength(4.0f, 6.0f).requiresTool()),
+            true
+    );
+
+    public static final Block COPPER_RAIL = registerBlock("copper_rail",
+            settings -> new CopperRailBlock(settings.strength(0.7F).noCollision()), // or customize as needed
             true
     );
 
@@ -44,5 +52,6 @@ public class ModBlocks {
 
     public static void registerModBlocks() {
         Jonky.LOGGER.info("Mod Blocks Initialised!");
+        BlockRenderLayerMap.putBlock(COPPER_RAIL, BlockRenderLayer.TRANSLUCENT);
     }
 }

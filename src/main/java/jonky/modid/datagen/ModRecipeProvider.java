@@ -1,12 +1,10 @@
 package jonky.modid.datagen;
 
+import jonky.modid.block.ModBlocks;
 import jonky.modid.item.ModItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
-import net.minecraft.data.recipe.RecipeExporter;
-import net.minecraft.data.recipe.RecipeGenerator;
-import net.minecraft.data.recipe.SmithingTransformRecipeJsonBuilder;
-import net.minecraft.data.recipe.VanillaRecipeGenerator;
+import net.minecraft.data.recipe.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
@@ -38,23 +36,25 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                         ).criterion("has_heavy_core", conditionsFromItem(Items.HEAVY_CORE))
                         .offerTo(exporter, String.valueOf(Registries.ITEM.getId(result)));
             }
+
             @Override
             public void generate() {
-                createHeavyCoreSmithingRecipe(Items.SHIELD ,ModItems.HEAVY_SHIELD);
-                createHeavyCoreSmithingRecipe(Items.NETHERITE_AXE ,ModItems.HEAVY_AXE);
-                createHeavyCoreSmithingRecipe(Items.NETHERITE_SWORD ,ModItems.HEAVY_GREATSWORD);
-                createHeavyCoreSmithingRecipe(Items.NETHERITE_SHOVEL ,ModItems.HEAVY_SHOVEL);
-                createHeavyCoreSmithingRecipe(Items.NETHERITE_HOE ,ModItems.HEAVY_HOE);
-                createHeavyCoreSmithingRecipe(Items.NETHERITE_PICKAXE ,ModItems.HEAVY_PICKAXE);
+                createHeavyCoreSmithingRecipe(Items.SHIELD, ModItems.HEAVY_SHIELD);
+                createHeavyCoreSmithingRecipe(Items.NETHERITE_AXE, ModItems.HEAVY_AXE);
+                createHeavyCoreSmithingRecipe(Items.NETHERITE_SWORD, ModItems.HEAVY_GREATSWORD);
+                createHeavyCoreSmithingRecipe(Items.NETHERITE_SHOVEL, ModItems.HEAVY_SHOVEL);
+                createHeavyCoreSmithingRecipe(Items.NETHERITE_HOE, ModItems.HEAVY_HOE);
+                createHeavyCoreSmithingRecipe(Items.NETHERITE_PICKAXE, ModItems.HEAVY_PICKAXE);
 
-//                SmithingTransformRecipeJsonBuilder.create(
-//                                Ingredient.ofItems(ModItems.HEAVY_UPGRADE), // template
-//                                Ingredient.ofItems(Items.SHIELD),                             // base
-//                                Ingredient.ofItems(Items.HEAVY_CORE),                      // addition
-//                                RecipeCategory.COMBAT,                                        // category
-//                                ModItems.HEAVY_SHIELD                                         // result
-//                        ).criterion("has_heavy_core", conditionsFromItem(Items.HEAVY_CORE))
-//                        .offerTo(exporter, String.valueOf(Registries.ITEM.getId(ModItems.HEAVY_SHIELD)));
+                createShaped(RecipeCategory.TRANSPORTATION, ModBlocks.COPPER_RAIL, 6)
+                        .pattern("g g")
+                        .pattern("g/g")
+                        .pattern("gWg")
+                        .input('g', Items.GOLD_INGOT)
+                        .input('/', Items.STICK)
+                        .input('W', Items.COPPER_BULB)
+                        .criterion("has_copper_bulb", conditionsFromItem(Items.COPPER_BULB))
+                        .offerTo(exporter);
             }
         };
     }

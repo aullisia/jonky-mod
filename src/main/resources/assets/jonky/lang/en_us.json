@@ -8,12 +8,19 @@
   "item.banknote.amount.info.100": "100 Jonkies",
   "item.banknote.amount.info.200": "200 Jonkies",
   "item.banknote.amount.info.500": "500 Jonkies",
+
   "entity.minecraft.villager.banker": "Banker",
-  "block.jonky.atm": "Automated Teller Machine",
+
   "enchantment.jonky.forsaking": "§cCurse of Forsaking",
+
+  "block.jonky.atm": "Automated Teller Machine",
   "item.jonky.atm_block": "Automated Teller Machine",
   "block.jonky.atm_block": "Automated Teller Machine",
   "itemTooltip.jonky.atm_tooltip": "A machine used for converting money.",
+
+  "item.jonky.copper_rail": "Copper Rail",
+  "block.jonky.copper_rail": "Copper Rail",
+
   "item.jonky.wrench": "Wrench",
 
   "item.jonky.heavy_template.applies_to": "Netherite Equipment",
@@ -27,5 +34,6 @@
   "item.jonky.heavy_axe": "Heavy Axe",
   "item.jonky.heavy_shovel": "Heavy Shovel",
   "item.jonky.heavy_hoe": "Heavy Hoe",
-  "item.jonky.heavy_pickaxe": "Heavy Pickaxe"
+  "item.jonky.heavy_pickaxe": "Heavy Pickaxe",
+  "item.jonky.heavy_shield": "Heavy Shield"
 }

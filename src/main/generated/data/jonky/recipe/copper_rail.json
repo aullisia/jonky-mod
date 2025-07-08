@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "/": "minecraft:stick",
+    "W": "minecraft:copper_bulb",
+    "g": "minecraft:gold_ingot"
+  },
+  "pattern": [
+    "g g",
+    "g/g",
+    "gWg"
+  ],
+  "result": {
+    "count": 6,
+    "id": "jonky:copper_rail"
+  }
+}

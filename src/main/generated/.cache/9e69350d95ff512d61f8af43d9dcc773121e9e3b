@@ -5,6 +5,8 @@
 7197a68ae4a610d4658fba80bf50f20969d0b8d5 data/jonky/advancement/recipes/combat/heavy_pickaxe.json
 68bc0ee15061fb9e47739db12a03be915a6bdccb data/jonky/advancement/recipes/combat/heavy_shield.json
 c4ab83cfaacf04edc63f69527b835dbdc5ca9539 data/jonky/advancement/recipes/combat/heavy_shovel.json
+123c4290c5fa83c9a730961489649895e530e905 data/jonky/advancement/recipes/transportation/copper_rail.json
+75abbb9e2f87c50bd748b4712830e391d74b7f2d data/jonky/recipe/copper_rail.json
 0ad38c38278a9c8094c8b9ea88cbcdbc28debc0b data/jonky/recipe/heavy_axe.json
 99d6e0c36c2c73a3bfc08dde88b84da225a087f1 data/jonky/recipe/heavy_greatsword.json
 b5cc6e534adfee87b94265ba5575ebb71f4f729e data/jonky/recipe/heavy_hoe.json
