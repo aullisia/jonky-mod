@@ -30,6 +30,12 @@ public class ModComponents {
             ComponentType.<Integer>builder().codec(Codec.INT).build()
     );
 
+    public static final ComponentType<Boolean> TOOL_ABILITY_TOGGLE_COMPONENT = Registry.register(
+            Registries.DATA_COMPONENT_TYPE,
+            Identifier.of(Jonky.MOD_ID, "tool_ability_toggle_component"),
+            ComponentType.<Boolean>builder().codec(Codec.BOOL).build()
+    );
+
 //    public static final ComponentType<UUID> LAST_ATTACKER_COMPONENT = Registry.register(
 //            Registries.DATA_COMPONENT_TYPE,
 //            Identifier.of(Jonky.MOD_ID, "last_attacker_component"),

@@ -1,18 +1,16 @@
-package jonky.modid.util;
+package jonky.modid.event;
 
 import com.github.crimsondawn45.fabricshieldlib.lib.event.ShieldBlockCallback;
 import com.github.crimsondawn45.fabricshieldlib.lib.event.ShieldDisabledCallback;
-import com.mojang.serialization.Codec;
-import com.terraformersmc.modmenu.util.mod.Mod;
 import jonky.modid.Jonky;
 import jonky.modid.component.ModComponents;
 import jonky.modid.item.ModItems;
+import jonky.modid.util.EnchantmentUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
@@ -26,12 +24,10 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class ShieldEvents {
     // Enchantments

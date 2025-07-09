@@ -3,7 +3,9 @@ package jonky.modid.block;
 import jonky.modid.Jonky;
 import jonky.modid.block.custom.ATM.ATMBlock;
 import jonky.modid.block.custom.CopperRail.CopperRailBlock;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.client.render.BlockRenderLayer;
@@ -52,6 +54,8 @@ public class ModBlocks {
 
     public static void registerModBlocks() {
         Jonky.LOGGER.info("Mod Blocks Initialised!");
-        BlockRenderLayerMap.putBlock(COPPER_RAIL, BlockRenderLayer.TRANSLUCENT);
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            BlockRenderLayerMap.putBlock(COPPER_RAIL, BlockRenderLayer.TRANSLUCENT);
+        }
     }
 }

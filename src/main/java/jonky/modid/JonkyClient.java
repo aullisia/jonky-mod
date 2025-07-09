@@ -1,6 +1,7 @@
 package jonky.modid;
 
 import jonky.modid.block.custom.ATM.ATMScreen;
+import jonky.modid.event.KeyInputHandler;
 import jonky.modid.screen.ModScreens;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -10,5 +11,6 @@ public class JonkyClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         HandledScreens.register(ModScreens.ATM_SCREEN_HANDLER, ATMScreen::new);
+        KeyInputHandler.register();
     }
 }

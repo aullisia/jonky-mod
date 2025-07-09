@@ -48,25 +48,86 @@ public class ExperimentalMinecartControllerMixin {
         }
     }
 
+//    @Inject(method="decelerateFromPoweredRail", at = @At("HEAD"), cancellable = true)
+//    private void decelerateFromPoweredRail(Vec3d velocity, BlockState railState, CallbackInfoReturnable<Vec3d> cir) {
+//        if (railState.isOf(ModBlocks.COPPER_RAIL) && !railState.get(CopperRailBlock.POWERED)) {
+//            double speed = velocity.length();
+//
+//            if (speed < 0.03) {
+//                Vec3d pos = getMinecart().getPos();
+//                BlockPos blockPos = BlockPos.ofFloored(pos);
+//                Vec3d center = new Vec3d(blockPos.getX() + 0.5, pos.y, blockPos.getZ() + 0.5);
+//                Vec3d offset = center.subtract(pos).multiply(0.3);
+//
+//                if (offset.lengthSquared() < 0.0004) {
+//                    cir.setReturnValue(Vec3d.ZERO);
+//                } else {
+//                    cir.setReturnValue(offset);
+//                }
+//            } else {
+//                cir.setReturnValue(velocity.multiply(0.1));
+//            }
+//        }
+//    }
+
     @Inject(method="decelerateFromPoweredRail", at = @At("HEAD"), cancellable = true)
     private void decelerateFromPoweredRail(Vec3d velocity, BlockState railState, CallbackInfoReturnable<Vec3d> cir) {
         if (railState.isOf(ModBlocks.COPPER_RAIL) && !railState.get(CopperRailBlock.POWERED)) {
             double speed = velocity.length();
 
-            if (speed < 0.03) {
-                Vec3d pos = getMinecart().getPos();
-                BlockPos blockPos = BlockPos.ofFloored(pos);
-                Vec3d center = new Vec3d(blockPos.getX() + 0.5, pos.y, blockPos.getZ() + 0.5);
-                Vec3d offset = center.subtract(pos).multiply(0.3);
+            AbstractMinecartEntity minecart = getMinecart();
+            Vec3d pos = minecart.getPos();
+            BlockPos currentPos = BlockPos.ofFloored(pos);
 
-                if (offset.lengthSquared() < 0.0004) {
+            // Get rail direction vector based on facing
+            Vec3d railDirection = getRailDirection(railState).normalize();
+
+            // Positions of rails in front and behind
+            BlockPos frontPos = currentPos.add((int) railDirection.x, 0, (int) railDirection.z);
+            BlockPos backPos = currentPos.add(-(int) railDirection.x, 0, -(int) railDirection.z);
+
+            boolean frontIsRail = minecart.getWorld().getBlockState(frontPos).isOf(ModBlocks.COPPER_RAIL);
+            boolean backIsRail = minecart.getWorld().getBlockState(backPos).isOf(ModBlocks.COPPER_RAIL);
+
+            Vec3d target;
+
+            if (frontIsRail && backIsRail) {
+                // Both front and back rails present
+                Vec3d frontCenter = new Vec3d(frontPos.getX() + 0.5, pos.y, frontPos.getZ() + 0.5);
+                Vec3d backCenter = new Vec3d(backPos.getX() + 0.5, pos.y, backPos.getZ() + 0.5);
+
+                // Center line midpoint between front and back rails
+                Vec3d midPoint = frontCenter.add(backCenter).multiply(0.5);
+
+                // Vector from minecart pos to midpoint
+                target = midPoint.subtract(pos).multiply(0.3);
+
+            } else if (frontIsRail) {
+                // Only front rail present, move towards its center
+                Vec3d frontCenter = new Vec3d(frontPos.getX() + 0.5, pos.y, frontPos.getZ() + 0.5);
+                target = frontCenter.subtract(pos).multiply(0.3);
+
+            } else if (backIsRail) {
+                // Only back rail present, move towards its center
+                Vec3d backCenter = new Vec3d(backPos.getX() + 0.5, pos.y, backPos.getZ() + 0.5);
+                target = backCenter.subtract(pos).multiply(0.3);
+
+            } else {
+                // No connected rails - fallback to center of current block
+                Vec3d center = new Vec3d(currentPos.getX() + 0.5, pos.y, currentPos.getZ() + 0.5);
+                target = center.subtract(pos).multiply(0.3);
+            }
+
+            if (speed < 0.03) {
+                if (target.lengthSquared() < 0.0004) {
                     cir.setReturnValue(Vec3d.ZERO);
                 } else {
-                    cir.setReturnValue(offset);
+                    cir.setReturnValue(target);
                 }
             } else {
                 cir.setReturnValue(velocity.multiply(0.1));
             }
         }
     }
+
 }

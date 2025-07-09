@@ -2,7 +2,9 @@ package jonky.modid.enchantment;
 
 import jonky.modid.Jonky;
 import jonky.modid.enchantment.custom.ForsakingEnchantmentEffect;
+import jonky.modid.item.ModItems;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
+import net.fabricmc.fabric.api.item.v1.FabricItem;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.component.type.AttributeModifierSlot;
@@ -18,6 +20,8 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
+
+import java.util.Optional;
 
 public class ModEnchantments {
     public static final RegistryKey<Enchantment> FORSAKING =
@@ -44,10 +48,13 @@ public class ModEnchantments {
                         new ForsakingEnchantmentEffect()));
     }
 
-    private static void modifyEnchantments() {
-        EnchantmentEvents.ALLOW_ENCHANTING.register((enchantment, target, enchantingContext) -> {
-            if (enchantment == Enchantments.KNOCKBACK && target.getItem() == Items.SHIELD) {
-                return TriState.TRUE; // Allow enchanting
+    public static void modifyEnchantments() {
+        EnchantmentEvents.ALLOW_ENCHANTING.register((enchantment, stack, context) -> {
+            Optional<RegistryKey<Enchantment>> keyOptional = enchantment.getKey();
+
+            if (keyOptional.isPresent() && keyOptional.get().equals(Enchantments.KNOCKBACK)
+                    && stack.isOf(Items.SHIELD) || stack.isOf(ModItems.HEAVY_SHIELD)) {
+                return TriState.TRUE;
             }
 
             return TriState.DEFAULT;
@@ -56,6 +63,5 @@ public class ModEnchantments {
 
     private static void register(Registerable<Enchantment> registry, RegistryKey<Enchantment> key, Enchantment.Builder builder) {
         registry.register(key, builder.build(key.getValue()));
-        modifyEnchantments();
     }
 }

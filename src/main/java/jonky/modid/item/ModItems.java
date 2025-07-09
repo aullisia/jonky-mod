@@ -5,11 +5,16 @@ import jonky.modid.Jonky;
 import jonky.modid.item.custom.BanknoteItem;
 import jonky.modid.item.custom.HeavyShieldItem;
 import jonky.modid.item.custom.WrenchItem;
+import jonky.modid.item.custom.heavy.tools.HeavyAxe;
+import jonky.modid.item.custom.heavy.tools.HeavyHoe;
+import jonky.modid.item.custom.heavy.tools.HeavyPickaxe;
+import jonky.modid.item.custom.heavy.tools.HeavyShovel;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
 import net.minecraft.item.SmithingTemplateItem;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -29,30 +34,22 @@ public class ModItems {
 
     public static final Item HEAVY_GREATSWORD = registerItem(
             "heavy_greatsword",
-            settings -> new Item(settings.sword(ModToolMaterials.HEAVY_CORE, 3f, -2.4f)),
+            settings -> new Item(settings.sword(ModToolMaterials.HEAVY_CORE, 3.5f, -2.4f)),
             new Item.Settings()
     );
     public static final Item HEAVY_PICKAXE = registerItem(
-            "heavy_pickaxe",
-            settings -> new Item(settings.pickaxe(ModToolMaterials.HEAVY_CORE, 1f, -2.8f)),
-            new Item.Settings()
+            "heavy_pickaxe", settings -> new HeavyPickaxe(ModToolMaterials.HEAVY_CORE, 1f, -2.8f, settings)
     );
     public static final Item HEAVY_SHOVEL = registerItem(
-            "heavy_shovel",
-            settings -> new Item(settings.shovel(ModToolMaterials.HEAVY_CORE, 1.5f, -3f)),
-            new Item.Settings()
+            "heavy_shovel", settings -> new HeavyShovel(ModToolMaterials.HEAVY_CORE, 1.5f, -3f, settings)
     );
     public static final Item HEAVY_AXE = registerItem(
-            "heavy_axe",
-            settings -> new Item(settings.axe(ModToolMaterials.HEAVY_CORE, 6f, -3.2f)),
-            new Item.Settings()
-    );
-    public static final Item HEAVY_HOE = registerItem(
-            "heavy_hoe",
-            settings -> new Item(settings.hoe(ModToolMaterials.HEAVY_CORE, 0f, -3f)),
-            new Item.Settings()
+            "heavy_axe", settings -> new HeavyAxe(ModToolMaterials.HEAVY_CORE, 7f, -3f, settings)
     );
 
+    public static final Item HEAVY_HOE = registerItem(
+            "heavy_hoe", settings -> new HeavyHoe(ModToolMaterials.HEAVY_CORE, -5f, 1f, settings)
+    );
     public static final SmithingTemplateItem HEAVY_UPGRADE = (SmithingTemplateItem) registerItem(
             "heavy_upgrade_smithing_template",
             settings -> new SmithingTemplateItem(
@@ -72,15 +69,12 @@ public class ModItems {
         return Items.register(registryKey, factory, settings);
     }
 
+    private static Item registerItem(String path, Function<Item.Settings, Item> function) {
+        return Registry.register(Registries.ITEM, Identifier.of(Jonky.MOD_ID, path),
+                function.apply(new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Jonky.MOD_ID, path)))));
+    }
+
     public static void registerModItems() {
         Jonky.LOGGER.info("Registering Mod Items for" + Jonky.MOD_ID);
-
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(entries -> {
-            entries.add(HEAVY_SHIELD);
-        });
-
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> {
-            entries.add(HEAVY_UPGRADE);
-        });
     }
 }

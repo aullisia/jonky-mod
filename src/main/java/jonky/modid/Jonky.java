@@ -4,11 +4,14 @@ import jonky.modid.block.ModBlockEntities;
 import jonky.modid.block.ModBlocks;
 import jonky.modid.component.ModComponents;
 import jonky.modid.enchantment.ModEnchantmentEffects;
+import jonky.modid.enchantment.ModEnchantments;
+import jonky.modid.event.RegisterEvents;
+import jonky.modid.item.ModItemGroups;
 import jonky.modid.item.ModItems;
 import jonky.modid.network.ModNetwork;
 import jonky.modid.screen.ModScreens;
 import jonky.modid.util.ModCustomTrades;
-import jonky.modid.util.ShieldEvents;
+import jonky.modid.event.ShieldEvents;
 import jonky.modid.villager.ModVillagers;
 import net.fabricmc.api.ModInitializer;
 
@@ -30,7 +33,9 @@ public class Jonky implements ModInitializer {
 		ModItems.registerModItems();
 		ModVillagers.registerVillagers();
 		ModCustomTrades.registerCustomTrades();
-		ShieldEvents.registerShieldEvents();
+		RegisterEvents.register();
+		ModItemGroups.registerItemGroups();
+		ModEnchantments.modifyEnchantments();
 
 		LOGGER.info("Jonky Mod Initialised");
 	}

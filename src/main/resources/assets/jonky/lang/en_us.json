@@ -1,4 +1,6 @@
 {
+  "itemgroup.jonky.jonky_items": "Jonky",
+
   "item.jonky.banknote": "Banknote",
   "item.banknote.amount.info": "Null",
   "item.banknote.amount.info.5": "5 Jonkies",
@@ -35,5 +37,8 @@
   "item.jonky.heavy_shovel": "Heavy Shovel",
   "item.jonky.heavy_hoe": "Heavy Hoe",
   "item.jonky.heavy_pickaxe": "Heavy Pickaxe",
-  "item.jonky.heavy_shield": "Heavy Shield"
+  "item.jonky.heavy_shield": "Heavy Shield",
+
+  "key.category.jonky": "Jonky",
+  "key.jonky.toggle_tool_ability": "Toggle Tool Ability"
 }
