@@ -21,11 +21,8 @@ public class HoeUsageEvent implements PlayerBlockBreakEvents.Before {
     // Done with the help of https://github.com/CoFH/CoFHCore/blob/c23d117dcd3b3b3408a138716b15507f709494cd/src/main/java/cofh/core/event/AreaEffectEvents.java
     private static final Set<BlockPos> HARVESTED_BLOCKS = new HashSet<>();
 
-    // TODO: add safety to this so it does not break the hoe instead leaves it at 1 hp
     @Override
-    public boolean beforeBlockBreak(World world, PlayerEntity player, BlockPos pos,
-                                    BlockState state, @Nullable BlockEntity blockEntity) {
-        // Only act server-side
+    public boolean beforeBlockBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {
         if (world.isClient) return true;
 
         ItemStack mainHandItem = player.getMainHandStack();
@@ -48,6 +45,13 @@ public class HoeUsageEvent implements PlayerBlockBreakEvents.Before {
                 if (!heavyHoe.isCorrectForDrops(mainHandItem, targetState)) continue;
 
                 HARVESTED_BLOCKS.add(targetPos);
+                int currentDamage = mainHandItem.getDamage();
+                int maxDamage = mainHandItem.getMaxDamage();
+
+                if (currentDamage >= maxDamage - 10) {
+                    continue;
+                }
+
                 serverPlayer.interactionManager.tryBreakBlock(targetPos);
                 HARVESTED_BLOCKS.remove(targetPos);
             }

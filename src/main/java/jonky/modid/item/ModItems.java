@@ -53,7 +53,7 @@ public class ModItems {
     public static final SmithingTemplateItem HEAVY_UPGRADE = (SmithingTemplateItem) registerItem(
             "heavy_upgrade_smithing_template",
             settings -> new SmithingTemplateItem(
-                    Text.translatable("item.jonky.heavy_template.applies_to").formatted(Formatting.GRAY),
+                    Text.translatable("item.jonky.heavy_template.applies_to").formatted(Formatting.BLUE),
                     Text.translatable("item.jonky.heavy_template.ingredients").formatted(Formatting.BLUE),
                     Text.translatable("item.jonky.heavy_template.base_slot_description"),
                     Text.translatable("item.jonky.heavy_template.additions_slot_description"),
@@ -76,5 +76,9 @@ public class ModItems {
 
     public static void registerModItems() {
         Jonky.LOGGER.info("Registering Mod Items for" + Jonky.MOD_ID);
+
+//        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> {
+//            entries.add(HEAVY_UPGRADE);
+//        });
     }
 }

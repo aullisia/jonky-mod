@@ -46,6 +46,15 @@ public class AxeUsageEvent implements PlayerBlockBreakEvents.Before {
                 if (!heavyAxe.isCorrectForDrops(mainHandItem, targetState)) continue;
 
                 HARVESTED_BLOCKS.add(targetPos);
+
+                int currentDamage = mainHandItem.getDamage();
+                int maxDamage = mainHandItem.getMaxDamage();
+
+                if (currentDamage >= maxDamage - 10) {
+                    HARVESTED_BLOCKS.remove(targetPos);
+                    continue;
+                }
+
                 serverPlayer.interactionManager.tryBreakBlock(targetPos);
                 HARVESTED_BLOCKS.remove(targetPos);
             }

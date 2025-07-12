@@ -13,5 +13,6 @@ public class RegisterEvents {
         PlayerBlockBreakEvents.BEFORE.register(new ShovelUsageEvent());
         PlayerBlockBreakEvents.BEFORE.register(new HoeUsageEvent());
         ShieldEvents.registerShieldEvents();
+        ModLootTableEvents.registerLootTableEvents();
     }
 }
