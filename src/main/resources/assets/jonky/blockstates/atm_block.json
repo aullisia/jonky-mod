@@ -2,22 +2,22 @@
   "variants": {
     "facing=north": {
       "model": "jonky:block/atm_block",
-      "uvlock": true
+      "uvlock": false
     },
     "facing=east": {
       "model": "jonky:block/atm_block",
       "y": 90,
-      "uvlock": true
+      "uvlock": false
     },
     "facing=south": {
       "model": "jonky:block/atm_block",
       "y": 180,
-      "uvlock": true
+      "uvlock": false
     },
     "facing=west": {
       "model": "jonky:block/atm_block",
       "y": 270,
-      "uvlock": true
+      "uvlock": false
     }
   }
 }
