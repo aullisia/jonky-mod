@@ -1,26 +1,29 @@
 package jonky.modid.item.custom.heavy.tools;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ToolMaterial;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 public class HeavyAxe extends HeavyTool {
-    public HeavyAxe(ToolMaterial material, float attackDamage, float attackSpeed, Settings settings) {
-        super(settings.axe(material, attackDamage, attackSpeed));
+    public HeavyAxe(ToolMaterial material, float attackDamage, float attackSpeed, Item.Properties properties) {
+        super(properties.axe(material, attackDamage, attackSpeed));
     }
 
-    public static List<BlockPos> getBlocksToBeDestroyed(BlockPos initialBlockPos, ServerPlayerEntity player) {
-        World world = player.getWorld();
+    public static List<BlockPos> getBlocksToBeDestroyed(BlockPos initialBlockPos, ServerPlayer player) {
+        Level world = player.level();
         BlockState initialState = world.getBlockState(initialBlockPos);
         Block initialBlock = initialState.getBlock();
 
@@ -42,7 +45,7 @@ public class HeavyAxe extends HeavyTool {
                     for (int dz = -1; dz <= 1; dz++) {
                         if (dx == 0 && dy == 0 && dz == 0) continue;
 
-                        BlockPos neighborPos = currentPos.add(dx, dy, dz);
+                        BlockPos neighborPos = currentPos.offset(dx, dy, dz);
                         if (visited.contains(neighborPos)) continue;
 
                         BlockState neighborState = world.getBlockState(neighborPos);
@@ -55,17 +58,16 @@ public class HeavyAxe extends HeavyTool {
                     }
                 }
             }
-
         }
 
         return new ArrayList<>(visited);
     }
 
     private static boolean isLogBlock(Block block) {
-        return block.getDefaultState().isIn(BlockTags.LOGS);
+        return block.defaultBlockState().is(BlockTags.LOGS);
     }
 
     private static boolean isLeafBlock(Block block) {
-        return block.getDefaultState().isIn(BlockTags.LEAVES);
+        return block.defaultBlockState().is(BlockTags.LEAVES);
     }
 }

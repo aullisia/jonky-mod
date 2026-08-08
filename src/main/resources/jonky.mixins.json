@@ -5,8 +5,8 @@
   "mixins": [
     "AnvilScreenHandlerMixin",
     "BankerVillagerEntityMixin",
-    "ExperimentalMinecartControllerMixin",
-    "MinecartControllerAccessor"
+    "LivingEntityShieldMixin",
+    "NewMinecartBehaviorMixin"
   ],
   "injectors": {
     "defaultRequire": 1

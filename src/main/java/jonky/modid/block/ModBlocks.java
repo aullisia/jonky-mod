@@ -3,26 +3,22 @@ package jonky.modid.block;
 import jonky.modid.Jonky;
 import jonky.modid.block.custom.ATM.ATMBlock;
 import jonky.modid.block.custom.CopperRail.CopperRailBlock;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.client.render.BlockRenderLayer;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import java.util.function.Function;
 
 public class ModBlocks {
     public static final Block ATM_BLOCK = registerBlock("atm_block",
             // Create block WITH registry key in settings
-            settings -> new ATMBlock(settings.strength(4.0f, 6.0f).requiresTool()),
+            settings -> new ATMBlock(settings.strength(4.0f, 6.0f).requiresCorrectToolForDrops()),
             true
     );
 
@@ -31,31 +27,24 @@ public class ModBlocks {
             true
     );
 
-    private static Block registerBlock(String name, Function<AbstractBlock.Settings, Block> blockFactory, boolean registerItem) {
-        Identifier blockId = Identifier.of(Jonky.MOD_ID, name);
-        RegistryKey<Block> blockKey = RegistryKey.of(RegistryKeys.BLOCK, blockId);
+    private static Block registerBlock(String name, Function<BlockBehaviour.Properties, Block> blockFactory, boolean registerItem) {
+        Identifier blockId = Identifier.fromNamespaceAndPath(Jonky.MOD_ID, name);
+        ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, blockId);
 
-        AbstractBlock.Settings settings = AbstractBlock.Settings.create().registryKey(blockKey);
+        BlockBehaviour.Properties settings = BlockBehaviour.Properties.of().setId(blockKey);
         Block block = blockFactory.apply(settings);
 
         if (registerItem) {
-            RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, blockId);
-            BlockItem blockItem = new BlockItem(block, new Item.Settings().registryKey(itemKey));
-            Registry.register(Registries.ITEM, itemKey, blockItem);
+            ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, blockId);
+            BlockItem blockItem = new BlockItem(block, new Item.Properties().setId(itemKey));
+            blockItem.registerBlocks(Item.BY_BLOCK, blockItem);
+            Registry.register(BuiltInRegistries.ITEM, itemKey, blockItem);
         }
 
-        return Registry.register(Registries.BLOCK, blockKey, block);
-    }
-
-    private static void registerBlockItem(String name, Block block) {
-        Registry.register(Registries.ITEM, Identifier.of(Jonky.MOD_ID, name),
-                new BlockItem(block, new Item.Settings()));
+        return Registry.register(BuiltInRegistries.BLOCK, blockKey, block);
     }
 
     public static void registerModBlocks() {
         Jonky.LOGGER.info("Mod Blocks Initialised!");
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            BlockRenderLayerMap.putBlock(COPPER_RAIL, BlockRenderLayer.TRANSLUCENT);
-        }
     }
 }

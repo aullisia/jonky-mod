@@ -1,82 +1,79 @@
 package jonky.modid.block.custom.ATM;
 
 import com.mojang.serialization.MapCodec;
-import jonky.modid.Jonky;
 import jonky.modid.block.ModBlocks;
-import jonky.modid.item.ModItems;
 import jonky.modid.util.BanknoteUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.stat.Stats;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ATMBlock extends BlockWithEntity {
+public class ATMBlock extends Block implements EntityBlock {
 
-    public ATMBlock(Settings settings) {
-        super(settings);
-        setDefaultState(getDefaultState().with(Properties.HORIZONTAL_FACING, Direction.NORTH));
+    public static final MapCodec<ATMBlock> CODEC = simpleCodec(ATMBlock::new);
+
+    public ATMBlock(Properties properties) {
+        super(properties);
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH));
     }
 
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return createCodec(ATMBlock::new);
+    public MapCodec<? extends ATMBlock> codec() {
+        return CODEC;
     }
 
     @Override
-    protected BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ATMBlockEntity(pos, state);
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (!world.isClient) {
-            // This will call the createScreenHandlerFactory method from BlockWithEntity, which will return our blockEntity casted to
-            // a namedScreenHandlerFactory. If your block class does not extend BlockWithEntity, it needs to implement createScreenHandlerFactory.
-            NamedScreenHandlerFactory screenHandlerFactory = state.createScreenHandlerFactory(world, pos);
+    public MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
+        return level.getBlockEntity(pos) instanceof MenuProvider menuProvider ? menuProvider : null;
+    }
 
-            if (screenHandlerFactory != null) {
-                // With this call the server will request the client to open the appropriate Screenhandler
-                player.openHandledScreen(screenHandlerFactory);
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (!level.isClientSide()) {
+            // This will call the getMenuProvider method from Block, which will return our blockEntity casted to a MenuProvider.
+            MenuProvider menuProvider = state.getMenuProvider(level, pos);
+
+            if (menuProvider != null) {
+                // With this call the server will request the client to open the appropriate ScreenHandler.
+                player.openMenu(menuProvider);
             }
         }
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     // Drops
     @Override
-    public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
+    public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
         if (blockEntity instanceof ATMBlockEntity atmBlockEntity) {
             int jonky = atmBlockEntity.getContainedJonky();
-            //Jonky.LOGGER.warn("ATM Block broken, contained Jonky: {}", jonky);
 
             List<ItemStack> jonkyStackList = new ArrayList<>();
             int[] values = {500, 200, 100, 50, 20, 10, 5};
@@ -93,40 +90,37 @@ public class ATMBlock extends BlockWithEntity {
             }
 
             for (ItemStack stack : jonkyStackList) {
-                dropStack(world, pos, stack);
+                Block.popResource(level, pos, stack);
             }
 
-            dropStack(world, pos, new ItemStack(ModBlocks.ATM_BLOCK.asItem(), 1));
+            Block.popResource(level, pos, new ItemStack(ModBlocks.ATM_BLOCK));
         }
 
-        player.incrementStat(Stats.MINED.getOrCreateStat(this));
-        player.addExhaustion(0.005F);
-        dropStacks(state, world, pos, blockEntity, player, tool);
+        super.playerDestroy(level, player, pos, state, blockEntity, tool);
     }
 
     @Override
-    public boolean hasComparatorOutput(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
-    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
-        return ScreenHandler.calculateComparatorOutput(world.getBlockEntity(pos));
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        return blockEntity instanceof ATMBlockEntity atmBlockEntity
+                ? atmBlockEntity.getContainedJonky()
+                : 0;
     }
-
-//    @Override
-//    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
-//        tooltip.add(Text.translatable("itemTooltip." + Jonky.MOD_ID + ".atm_tooltip").formatted(Formatting.GRAY));
-//    }
 
     // Rotation placement
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(Properties.HORIZONTAL_FACING);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(BlockStateProperties.HORIZONTAL_FACING);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return super.getPlacementState(ctx).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return super.getStateForPlacement(context)
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite());
     }
 }

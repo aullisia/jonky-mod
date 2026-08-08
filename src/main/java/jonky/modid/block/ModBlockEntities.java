@@ -2,13 +2,14 @@ package jonky.modid.block;
 
 import jonky.modid.Jonky;
 import jonky.modid.block.custom.ATM.ATMBlockEntity;
-import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.block.Block;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+
+import java.util.Set;
 
 public class ModBlockEntities {
     public static final BlockEntityType<ATMBlockEntity> ATM_BLOCK_ENTITY =
@@ -16,19 +17,15 @@ public class ModBlockEntities {
 
     private static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(
             String name,
-            FabricBlockEntityTypeBuilder.Factory<? extends T> factory,
+            BlockEntityType.BlockEntitySupplier<? extends T> factory,
             Block... blocks) {
 
-        Identifier id = Identifier.of(Jonky.MOD_ID, name);
-        return Registry.register(Registries.BLOCK_ENTITY_TYPE, id,
-                FabricBlockEntityTypeBuilder.<T>create(factory, blocks).build());
+        Identifier id = Identifier.fromNamespaceAndPath(Jonky.MOD_ID, name);
+        return Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id,
+                new BlockEntityType<>(factory, Set.of(blocks)));
     }
 
     public static void registerModBlockEntities() {
         Jonky.LOGGER.info("Mod Block Entities Initialized!");
-    }
-
-    public static void registerModBlocks() {
-        Jonky.LOGGER.info("Mod Block Entities initialised!");
     }
 }

@@ -2,15 +2,14 @@ package jonky.modid.event.heavycore;
 
 import jonky.modid.component.ModComponents;
 import jonky.modid.item.custom.heavy.tools.HeavyAxe;
-import jonky.modid.item.custom.heavy.tools.HeavyPickaxe;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -21,16 +20,16 @@ public class AxeUsageEvent implements PlayerBlockBreakEvents.Before {
     private static final Set<BlockPos> HARVESTED_BLOCKS = new HashSet<>();
 
     @Override
-    public boolean beforeBlockBreak(World world, PlayerEntity player, BlockPos pos,
+    public boolean beforeBlockBreak(Level world, Player player, BlockPos pos,
                                     BlockState state, @Nullable BlockEntity blockEntity) {
         // Only act server-side
-        if (world.isClient) return true;
+        if (world.isClientSide()) return true;
 
-        ItemStack mainHandItem = player.getMainHandStack();
+        ItemStack mainHandItem = player.getMainHandItem();
 
         if (mainHandItem.getItem() instanceof HeavyAxe heavyAxe
                 && Boolean.TRUE.equals(mainHandItem.get(ModComponents.TOOL_ABILITY_TOGGLE_COMPONENT))
-                && player instanceof ServerPlayerEntity serverPlayer) {
+                && player instanceof ServerPlayer serverPlayer) {
 
             if (HARVESTED_BLOCKS.contains(pos)) {
                 return true;
@@ -43,11 +42,11 @@ public class AxeUsageEvent implements PlayerBlockBreakEvents.Before {
 
                 BlockState targetState = world.getBlockState(targetPos);
 
-                if (!heavyAxe.isCorrectForDrops(mainHandItem, targetState)) continue;
+                if (!heavyAxe.isCorrectToolForDrops(mainHandItem, targetState)) continue;
 
                 HARVESTED_BLOCKS.add(targetPos);
 
-                int currentDamage = mainHandItem.getDamage();
+                int currentDamage = mainHandItem.getDamageValue();
                 int maxDamage = mainHandItem.getMaxDamage();
 
                 if (currentDamage >= maxDamage - 10) {
@@ -55,7 +54,7 @@ public class AxeUsageEvent implements PlayerBlockBreakEvents.Before {
                     continue;
                 }
 
-                serverPlayer.interactionManager.tryBreakBlock(targetPos);
+                serverPlayer.gameMode.destroyBlock(targetPos);
                 HARVESTED_BLOCKS.remove(targetPos);
             }
         }

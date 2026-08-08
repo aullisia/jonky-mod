@@ -1,14 +1,15 @@
 package jonky.modid.util;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 public class EnchantmentUtils {
-    public static RegistryEntry<Enchantment> getEnchantmentEntry(RegistryKey<Enchantment> enchantment, DynamicRegistryManager registryManager) {
-        return registryManager.getOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(enchantment);
+    public static Holder<Enchantment> getEnchantmentEntry(ResourceKey<Enchantment> enchantment, RegistryAccess registryAccess) {
+        Registry<Enchantment> registry = registryAccess.lookupOrThrow(Registries.ENCHANTMENT);
+        return registry.wrapAsHolder(registry.getValue(enchantment));
     }
 }

@@ -3,39 +3,46 @@ package jonky.modid.item;
 import jonky.modid.Jonky;
 import jonky.modid.block.ModBlocks;
 import jonky.modid.util.BanknoteUtils;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 
 public class ModItemGroups {
-    public static final ItemGroup JONKY_ITEMS_GROUP = Registry.register(Registries.ITEM_GROUP,
-            Identifier.of(Jonky.MOD_ID, "jonky_items"),
-            FabricItemGroup.builder().icon(() -> new ItemStack(ModItems.BANKNOTE))
-                    .displayName(Text.translatable("itemgroup.jonky.jonky_items"))
-                    .entries((displayContext, entries) -> {
-                        entries.add(BanknoteUtils.createBanknoteStack(5, 1));
-                        entries.add(BanknoteUtils.createBanknoteStack(10, 1));
-                        entries.add(BanknoteUtils.createBanknoteStack(20, 1));
-                        entries.add(BanknoteUtils.createBanknoteStack(50, 1));
-                        entries.add(BanknoteUtils.createBanknoteStack(100, 1));
-                        entries.add(BanknoteUtils.createBanknoteStack(200, 1));
-                        entries.add(BanknoteUtils.createBanknoteStack(500, 1));
+    public static final ResourceKey<CreativeModeTab> JONKY_ITEMS_GROUP_KEY =
+            ResourceKey.create(Registries.CREATIVE_MODE_TAB, Identifier.fromNamespaceAndPath(Jonky.MOD_ID, "jonky_items"));
 
-                        entries.add(ModItems.WRENCH);
-                        entries.add(ModItems.HEAVY_SHIELD);
-                        entries.add(ModItems.HEAVY_GREATSWORD);
-                        entries.add(ModItems.HEAVY_PICKAXE);
-                        entries.add(ModItems.HEAVY_SHOVEL);
-                        entries.add(ModItems.HEAVY_AXE);
-                        entries.add(ModItems.HEAVY_HOE);
-                        entries.add(ModItems.HEAVY_UPGRADE);
+    public static final CreativeModeTab JONKY_ITEMS_GROUP = Registry.register(
+            BuiltInRegistries.CREATIVE_MODE_TAB,
+            JONKY_ITEMS_GROUP_KEY,
+            FabricCreativeModeTab.builder()
+                    .icon(() -> new ItemStack(ModItems.BANKNOTE))
+                    .title(Component.translatable("itemgroup.jonky.jonky_items"))
+                    .displayItems((params, output) -> {
+                        output.accept(BanknoteUtils.createBanknoteStack(5, 1));
+                        output.accept(BanknoteUtils.createBanknoteStack(10, 1));
+                        output.accept(BanknoteUtils.createBanknoteStack(20, 1));
+                        output.accept(BanknoteUtils.createBanknoteStack(50, 1));
+                        output.accept(BanknoteUtils.createBanknoteStack(100, 1));
+                        output.accept(BanknoteUtils.createBanknoteStack(200, 1));
+                        output.accept(BanknoteUtils.createBanknoteStack(500, 1));
 
-                        entries.add(ModBlocks.ATM_BLOCK);
-                        entries.add(ModBlocks.COPPER_RAIL);
+                        output.accept(ModItems.WRENCH);
+                        output.accept(ModItems.HEAVY_SHIELD);
+                        output.accept(ModItems.HEAVY_GREATSWORD);
+                        output.accept(ModItems.HEAVY_PICKAXE);
+                        output.accept(ModItems.HEAVY_SHOVEL);
+                        output.accept(ModItems.HEAVY_AXE);
+                        output.accept(ModItems.HEAVY_HOE);
+                        output.accept(ModItems.HEAVY_UPGRADE);
+
+                        output.accept(ModBlocks.ATM_BLOCK);
+                        output.accept(ModBlocks.COPPER_RAIL);
 
                     }).build());
 

@@ -3,18 +3,18 @@ package jonky.modid.enchantment;
 import com.mojang.serialization.MapCodec;
 import jonky.modid.Jonky;
 import jonky.modid.enchantment.custom.ForsakingEnchantmentEffect;
-import net.minecraft.enchantment.effect.EnchantmentEntityEffect;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.enchantment.effects.EnchantmentEntityEffect;
 
 public class ModEnchantmentEffects {
-    public static final MapCodec<? extends EnchantmentEntityEffect> Forsaking =
+    public static final MapCodec<? extends EnchantmentEntityEffect> FORSAKING =
             registerEntityEffect("forsaking", ForsakingEnchantmentEffect.CODEC);
 
     private static MapCodec<? extends EnchantmentEntityEffect> registerEntityEffect(String name,
                                                                                     MapCodec<? extends EnchantmentEntityEffect> codec) {
-        return Registry.register(Registries.ENCHANTMENT_ENTITY_EFFECT_TYPE, Identifier.of(Jonky.MOD_ID, name), codec);
+        return Registry.register(BuiltInRegistries.ENCHANTMENT_ENTITY_EFFECT_TYPE, Identifier.fromNamespaceAndPath(Jonky.MOD_ID, name), codec);
     }
 
     public static void registerEnchantmentEffects() {

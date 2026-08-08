@@ -1,33 +1,45 @@
 {
   "variants": {
-    "powered=false,facing=north": {
+    "shape=north_south,powered=false": {
       "model": "jonky:block/copper_rail"
     },
-    "powered=false,facing=south": {
-      "model": "jonky:block/copper_rail",
-      "y": 180
+    "shape=north_south,powered=true": {
+      "model": "jonky:block/copper_rail_on"
     },
-    "powered=false,facing=west": {
-      "model": "jonky:block/copper_rail",
-      "y": 270
-    },
-    "powered=false,facing=east": {
+    "shape=east_west,powered=false": {
       "model": "jonky:block/copper_rail",
       "y": 90
     },
-    "powered=true,facing=north": {
-      "model": "jonky:block/copper_rail_on"
-    },
-    "powered=true,facing=south": {
+    "shape=east_west,powered=true": {
       "model": "jonky:block/copper_rail_on",
-      "y": 180
+      "y": 90
     },
-    "powered=true,facing=west": {
-      "model": "jonky:block/copper_rail_on",
-      "y": 270
+    "shape=ascending_north,powered=false": {
+      "model": "jonky:block/copper_rail_raised_ne"
     },
-    "powered=true,facing=east": {
-      "model": "jonky:block/copper_rail_on",
+    "shape=ascending_north,powered=true": {
+      "model": "jonky:block/copper_rail_on_raised_ne"
+    },
+    "shape=ascending_south,powered=false": {
+      "model": "jonky:block/copper_rail_raised_sw"
+    },
+    "shape=ascending_south,powered=true": {
+      "model": "jonky:block/copper_rail_on_raised_sw"
+    },
+    "shape=ascending_east,powered=false": {
+      "model": "jonky:block/copper_rail_raised_ne",
+      "y": 90
+    },
+    "shape=ascending_east,powered=true": {
+      "model": "jonky:block/copper_rail_on_raised_ne",
+      "y": 90
+    },
+    "shape=ascending_west,powered=false": {
+      "model": "jonky:block/copper_rail_raised_sw",
+      "y": 90
+    },
+    "shape=ascending_west,powered=true": {
+      "model": "jonky:block/copper_rail_on_raised_sw",
       "y": 90
     }
   }

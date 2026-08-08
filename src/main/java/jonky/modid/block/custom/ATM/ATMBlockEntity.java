@@ -2,35 +2,31 @@ package jonky.modid.block.custom.ATM;
 
 import jonky.modid.block.ModBlockEntities;
 import jonky.modid.util.ImplementedInventory;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.text.Text;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
-public class ATMBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
-    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(9, ItemStack.EMPTY);
+public class ATMBlockEntity extends BlockEntity implements MenuProvider, ImplementedInventory {
+    private final NonNullList<ItemStack> inventory = NonNullList.withSize(9, ItemStack.EMPTY);
     private int containedJonky = 0;
 
     public int getContainedJonky() {
         return containedJonky;
     }
 
-    private final PropertyDelegate propertyDelegate = new PropertyDelegate() {
+    private final ContainerData containerData = new ContainerData() {
         @Override
         public int get(int index) {
             return containedJonky;
@@ -43,7 +39,7 @@ public class ATMBlockEntity extends BlockEntity implements NamedScreenHandlerFac
 
         //this is supposed to return the amount of integers you have in your delegate, in our example only one
         @Override
-        public int size() {
+        public int getCount() {
             return 1;
         }
     };
@@ -53,36 +49,29 @@ public class ATMBlockEntity extends BlockEntity implements NamedScreenHandlerFac
     }
 
     @Override
-    public DefaultedList<ItemStack> getItems() {
+    public NonNullList<ItemStack> getItems() {
         return inventory;
     }
 
     @Override
-    public Text getDisplayName() {
-        return Text.translatable(getCachedState().getBlock().getTranslationKey());
+    public Component getDisplayName() {
+        return Component.translatable(this.getBlockState().getBlock().getDescriptionId());
     }
 
     @Override
-    public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new ATMScreenHandler(syncId, playerInventory, this, propertyDelegate);
+    public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+        return new ATMScreenHandler(containerId, playerInventory, this, containerData);
     }
 
     @Override
-    public void onBlockReplaced(BlockPos pos, BlockState oldState) {
-        if (this.world != null) {
-            this.world.updateComparators(pos, oldState.getBlock());
-        }
+    public void loadAdditional(ValueInput input) {
+        containedJonky = input.getIntOr("contained_jonky", 0);
+        ContainerHelper.loadAllItems(input, this.getItems());
     }
 
     @Override
-    public void readData(ReadView view) {
-        containedJonky = view.getInt("contained_jonky", 0);
-        Inventories.readData(view, this.getItems());
-    }
-
-    @Override
-    public void writeData(WriteView view) {
-        view.putInt("contained_jonky", containedJonky);
-        Inventories.writeData(view, this.getItems());
+    public void saveAdditional(ValueOutput output) {
+        output.putInt("contained_jonky", containedJonky);
+        ContainerHelper.saveAllItems(output, this.getItems());
     }
 }

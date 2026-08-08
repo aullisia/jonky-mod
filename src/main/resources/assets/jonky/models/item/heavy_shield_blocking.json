@@ -1,5 +1,4 @@
 {
-  "parent": "fabricshieldlib:item/fabric_shield_blocking",
   "textures":{
     "0": "jonky:item/heavy_shield",
     "particle":"jonky:item/heavy_shield"

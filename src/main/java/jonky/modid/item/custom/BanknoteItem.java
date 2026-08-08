@@ -1,69 +1,70 @@
 package jonky.modid.item.custom;
 
 import jonky.modid.component.ModComponents;
-import net.minecraft.component.type.TooltipDisplayComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+
 import java.util.function.Consumer;
 
 public class BanknoteItem extends Item {
 
-    public BanknoteItem(Settings settings) {
-        super(settings);
+    public BanknoteItem(Item.Properties properties) {
+        super(properties);
     }
 
     @Override
-    public void appendTooltip(
-            ItemStack stack, Item.TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type
-    ){
-    Integer value = stack.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
+    public void appendHoverText(
+            ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> textConsumer, TooltipFlag flag
+    ) {
+        Integer value = stack.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
         if (value == null) return;
 
         String key;
-        Formatting format;
+        ChatFormatting format;
 
         key = switch (value) {
             case 5 -> {
-                format = Formatting.YELLOW;
+                format = ChatFormatting.YELLOW;
                 yield "5";
             }
             case 10 -> {
-                format = Formatting.GRAY;
+                format = ChatFormatting.GRAY;
                 yield "10";
             }
             case 20 -> {
-                format = Formatting.RED;
+                format = ChatFormatting.RED;
                 yield "20";
             }
             case 50 -> {
-                format = Formatting.GOLD;
+                format = ChatFormatting.GOLD;
                 yield "50";
             }
             case 100 -> {
-                format = Formatting.GREEN;
+                format = ChatFormatting.GREEN;
                 yield "100";
             }
             case 200 -> {
-                format = Formatting.BLUE;
+                format = ChatFormatting.BLUE;
                 yield "200";
             }
             case 500 -> {
-                format = Formatting.DARK_GRAY;
+                format = ChatFormatting.DARK_GRAY;
                 yield "500";
             }
             default -> {
-                format = Formatting.DARK_RED;
+                format = ChatFormatting.DARK_RED;
                 yield "";
             }
         };
 
         if (!key.isEmpty()) {
-            textConsumer.accept(Text.translatable("item.banknote.amount.info." + key).formatted(format));
+            textConsumer.accept(Component.translatable("item.banknote.amount.info." + key).withStyle(format));
         } else {
-            textConsumer.accept(Text.translatable("item.banknote.amount.info").formatted(format));
+            textConsumer.accept(Component.translatable("item.banknote.amount.info").withStyle(format));
         }
     }
 }

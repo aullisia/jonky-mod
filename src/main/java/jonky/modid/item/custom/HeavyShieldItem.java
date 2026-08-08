@@ -1,17 +1,20 @@
 package jonky.modid.item.custom;
 
-import com.github.crimsondawn45.fabricshieldlib.lib.object.FabricShieldItem;
 import jonky.modid.component.ModComponents;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShieldItem;
 
-public class HeavyShieldItem extends FabricShieldItem {
-    public HeavyShieldItem(Settings settings, int coolDownTicks, int enchantability, Item... repairItems) {
-        super(settings, coolDownTicks, enchantability, repairItems);
+public class HeavyShieldItem extends ShieldItem {
+    public HeavyShieldItem(Properties properties) {
+        super(properties);
     }
 
-    public void onCraft(ItemStack stack, World world) {
-        stack.set(ModComponents.HEAVY_SHIELD_ENERGY_COMPONENT, 0);
+    public int getShieldEnergy(ItemStack stack) {
+        Integer energy = stack.get(ModComponents.HEAVY_SHIELD_ENERGY_COMPONENT);
+        return energy == null ? 0 : energy;
+    }
+
+    public void setShieldEnergy(ItemStack stack, int energy) {
+        stack.set(ModComponents.HEAVY_SHIELD_ENERGY_COMPONENT, energy);
     }
 }

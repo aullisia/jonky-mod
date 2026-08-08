@@ -1,86 +1,70 @@
 package jonky.modid.block.custom.ATM;
 
-import jonky.modid.Jonky;
 import jonky.modid.component.ModComponents;
 import jonky.modid.item.ModItems;
 import jonky.modid.screen.ModScreens;
 import jonky.modid.util.BanknoteUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.*;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
-public class ATMScreenHandler extends ScreenHandler {
-    private final Inventory inventory;
+public class ATMScreenHandler extends AbstractContainerMenu {
+    private final Container inventory;
     final Slot inputSlot;
     final Slot outputSlot;
     private int selectedRecipe;
-    PropertyDelegate propertyDelegate;
+    private final ContainerData propertyDelegate;
 
-    // This constructor gets called on the client when the server wants it to open the screenHandler,
-    // The client will call the other constructor with an empty Inventory and the screenHandler will automatically
-    // sync this empty inventory with the inventory on the server.
-    public ATMScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(9), new ArrayPropertyDelegate(1));
+    public ATMScreenHandler(int syncId, Inventory playerInventory) {
+        this(syncId, playerInventory, new SimpleContainer(9), new SimpleContainerData(1));
     }
 
-    // This constructor gets called from the BlockEntity on the server without calling the other constructor first, the server knows the inventory of the container
-    // and can therefore directly provide it as an argument. This inventory will then be synced to the client.
-    public ATMScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate propertyDelegate) {
+    public ATMScreenHandler(int syncId, Inventory playerInventory, Container inventory, ContainerData propertyDelegate) {
         super(ModScreens.ATM_SCREEN_HANDLER, syncId);
-        checkSize(inventory, 9);
+        checkContainerSize(inventory, 9);
         this.inventory = inventory;
-        // some inventories do custom logic when a player opens it.
-        inventory.onOpen(playerInventory.player);
+        inventory.startOpen(playerInventory.player);
 
         this.propertyDelegate = propertyDelegate;
-        this.addProperties(propertyDelegate);
+        this.addDataSlots(propertyDelegate);
 
         int m;
         int l;
-        // Our inventory
-        this.inputSlot = this.addSlot(new Slot(inventory, 1, 20, 33){
+
+        this.inputSlot = this.addSlot(new Slot(inventory, 1, 20, 33) {
             @Override
-            public boolean canInsert(ItemStack stack) {
+            public boolean mayPlace(ItemStack stack) {
                 return stack.getItem() == ModItems.BANKNOTE;
             }
 
             @Override
-            public void setStack(ItemStack stack) {
-//                this.setStack(stack, this.getStack());
+            public void setByPlayer(ItemStack stack) {
                 storeBanknote(stack);
             }
         });
         this.outputSlot = this.addSlot(new Slot(inventory, 2, 143, 33) {
             @Override
-            public boolean canInsert(ItemStack stack) {
+            public boolean mayPlace(ItemStack stack) {
                 return false;
             }
 
             @Override
-            public void onTakeItem(PlayerEntity player, ItemStack stack) {
+            public void onTake(Player player, ItemStack stack) {
                 deductStoredJonkyFromItem(stack);
-                stack.onCraftByPlayer(player, stack.getCount());
-                super.onTakeItem(player, stack);
+                stack.onCraftedBy(player, stack.getCount());
+                super.onTake(player, stack);
 
                 refillOutputSlot();
             }
         });
-//        this.outputSlot = this.addSlot(new Slot(this.output, 1, 143, 33) {
-//        for (m = 0; m < 3; ++m) {
-//            for (l = 0; l < 3; ++l) {
-//                this.addSlot(new Slot(inventory, l + m * 3, 62 + l * 18, 17 + m * 18));
-//            }
-
-
 
         // The player inventory
         for (m = 0; m < 3; ++m) {
@@ -94,64 +78,48 @@ public class ATMScreenHandler extends ScreenHandler {
         }
     }
 
-    // offerOrDropStack Copied from ScreenHandler.class
-    private static void offerOrDropStack(PlayerEntity player, ItemStack stack) {
-        boolean bl;
-        boolean var10000;
-        label27: {
-            bl = player.isRemoved() && player.getRemovalReason() != Entity.RemovalReason.CHANGED_DIMENSION;
-            if (player instanceof ServerPlayerEntity serverPlayerEntity) {
-                if (serverPlayerEntity.isDisconnected()) {
-                    var10000 = true;
-                    break label27;
-                }
-            }
-
-            var10000 = false;
+    private static void offerOrDropStack(Player player, ItemStack stack) {
+        boolean dropped = player.isRemoved() && player.getRemovalReason() != Entity.RemovalReason.CHANGED_DIMENSION;
+        if (player instanceof ServerPlayer serverPlayer) {
+            dropped = dropped || serverPlayer.hasDisconnected();
         }
-
-        boolean bl2 = var10000;
-        if (!bl && !bl2) {
-            if (player instanceof ServerPlayerEntity) {
-                player.getInventory().offerOrDrop(stack);
-            }
+        if (!dropped && player instanceof ServerPlayer) {
+            player.getInventory().add(stack);
         } else {
-            player.dropItem(stack, false);
+            player.drop(stack, false);
         }
-
     }
 
     @Override
-    public void onClosed(PlayerEntity player) {
-        if (player instanceof ServerPlayerEntity) {
-            outputSlot.setStack(ItemStack.EMPTY);
-            ItemStack itemStack = this.getCursorStack();
+    public void removed(Player player) {
+        if (player instanceof ServerPlayer) {
+            outputSlot.set(ItemStack.EMPTY);
+            ItemStack itemStack = this.getCarried();
             if (!itemStack.isEmpty()) {
                 offerOrDropStack(player, itemStack);
-                this.setCursorStack(ItemStack.EMPTY);
+                this.setCarried(ItemStack.EMPTY);
             }
         }
     }
 
     @Override
-    public boolean canUse(PlayerEntity player) {
-        return this.inventory.canPlayerUse(player);
+    public boolean stillValid(Player player) {
+        return this.inventory.stillValid(player);
     }
 
     private void storeBanknote(ItemStack stack) {
         int storedJonky = propertyDelegate.get(0);
         Integer banknoteValue = stack.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
-        if(banknoteValue == null) return;
+        if (banknoteValue == null) return;
         storedJonky += (banknoteValue * stack.getCount());
         setStoredJonky(storedJonky);
     }
 
-    private void setStoredJonky(int value){
+    private void setStoredJonky(int value) {
         propertyDelegate.set(0, value);
     }
 
-
-    public int getStoredJonky(){
+    public int getStoredJonky() {
         return propertyDelegate.get(0);
     }
 
@@ -160,11 +128,11 @@ public class ATMScreenHandler extends ScreenHandler {
             int storedJonky = getStoredJonky();
             int refillAmount = Math.min(storedJonky / selectedRecipe, 64);
             if (refillAmount > 0) {
-                outputSlot.setStackNoCallbacks(
+                outputSlot.set(
                         BanknoteUtils.createBanknoteStack(selectedRecipe, refillAmount)
                 );
             } else {
-                outputSlot.setStackNoCallbacks(ItemStack.EMPTY);
+                outputSlot.set(ItemStack.EMPTY);
             }
         }
     }
@@ -178,12 +146,10 @@ public class ATMScreenHandler extends ScreenHandler {
     }
 
     @Override
-    public boolean onButtonClick(PlayerEntity player, int id) {
+    public boolean clickMenuButton(Player player, int id) {
         ItemStack selectedBanknote = BanknoteUtils.ATMItemList.get(id);
         Integer selectedBanknoteValue = selectedBanknote.get(ModComponents.BANKNOTE_VALUE_COMPONENT);
-        if(selectedBanknoteValue == null) return false;
-        //Jonky.LOGGER.warn("Selected Banknote value: " + selectedBanknoteValue);
-        // Conversion logic
+        if (selectedBanknoteValue == null) return false;
 
         int storedJonky = getStoredJonky();
 
@@ -191,51 +157,45 @@ public class ATMScreenHandler extends ScreenHandler {
 
         if (banknoteAmount > 0) {
             selectedRecipe = selectedBanknoteValue;
-            this.outputSlot.setStackNoCallbacks(BanknoteUtils.createBanknoteStack(selectedBanknoteValue, banknoteAmount));
+            this.outputSlot.set(BanknoteUtils.createBanknoteStack(selectedBanknoteValue, banknoteAmount));
             return true;
         }
 
         return false;
     }
 
-    // Shift + Player Inv Slot
     @Override
-    public ItemStack quickMove(PlayerEntity player, int invSlot) {
+    public ItemStack quickMoveStack(Player player, int invSlot) {
         ItemStack movedStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
-        if (slot != null && slot.hasStack()) {
-            ItemStack original = slot.getStack();
+        if (slot != null && slot.hasItem()) {
+            ItemStack original = slot.getItem();
             movedStack = original.copy();
 
-            // 1) If we’re shift‑clicking the **output slot**, withdraw money
             if (slot == this.outputSlot) {
                 deductStoredJonkyFromItem(original);
-                if (!this.insertItem(original, this.inventory.size(), this.slots.size(), true)) {
+                if (!this.moveItemStackTo(original, this.inventory.getContainerSize(), this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-                slot.markDirty();
+                slot.setChanged();
                 refillOutputSlot();
                 return movedStack;
             }
 
-            // 2) Otherwise, vanilla behavior: container → player, or player → container
-            if (invSlot < this.inventory.size()) {
-                // container to player
-                if (!this.insertItem(original, this.inventory.size(), this.slots.size(), true)) {
+            if (invSlot < this.inventory.getContainerSize()) {
+                if (!this.moveItemStackTo(original, this.inventory.getContainerSize(), this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
             } else {
-                // player to container
-                if (!this.insertItem(original, 0, this.inventory.size(), false)) {
+                if (!this.moveItemStackTo(original, 0, this.inventory.getContainerSize(), false)) {
                     return ItemStack.EMPTY;
                 }
             }
 
-            // 3) clean up
             if (original.isEmpty()) {
-                slot.setStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.markDirty();
+                slot.setChanged();
             }
         }
         return movedStack;

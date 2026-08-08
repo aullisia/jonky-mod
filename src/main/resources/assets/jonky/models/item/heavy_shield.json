@@ -1,5 +1,4 @@
 {
-  "parent":"fabricshieldlib:item/fabric_shield",
   "texture_size": [64, 64],
   "textures":{
     "0": "jonky:item/heavy_shield",

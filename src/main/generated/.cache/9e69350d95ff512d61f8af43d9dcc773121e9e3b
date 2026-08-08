@@ -1,4 +1,4 @@
-// 1.21.6	-999999999-01-01T00:00:00	Jonky/JonkyMod Recipes
+// 26.2	-999999999-01-01T00:00:00	Jonky/JonkyMod Recipes
 722eb52cb9c17b84c20c9b4aefd5e469568677d6 data/jonky/advancement/recipes/combat/heavy_axe.json
 0e0fb37cec2226fb1c9e0c03a714cce68fa08735 data/jonky/advancement/recipes/combat/heavy_greatsword.json
 8d901beb6d01a83e42c6423322489f77dcf80765 data/jonky/advancement/recipes/combat/heavy_hoe.json
@@ -6,7 +6,7 @@
 68bc0ee15061fb9e47739db12a03be915a6bdccb data/jonky/advancement/recipes/combat/heavy_shield.json
 c4ab83cfaacf04edc63f69527b835dbdc5ca9539 data/jonky/advancement/recipes/combat/heavy_shovel.json
 123c4290c5fa83c9a730961489649895e530e905 data/jonky/advancement/recipes/transportation/copper_rail.json
-75abbb9e2f87c50bd748b4712830e391d74b7f2d data/jonky/recipe/copper_rail.json
+8df29feaf92f100c7b796c284a1f6bd31f3fe440 data/jonky/recipe/copper_rail.json
 0ad38c38278a9c8094c8b9ea88cbcdbc28debc0b data/jonky/recipe/heavy_axe.json
 99d6e0c36c2c73a3bfc08dde88b84da225a087f1 data/jonky/recipe/heavy_greatsword.json
 b5cc6e534adfee87b94265ba5575ebb71f4f729e data/jonky/recipe/heavy_hoe.json

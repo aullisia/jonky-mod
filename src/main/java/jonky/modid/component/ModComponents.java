@@ -2,45 +2,35 @@ package jonky.modid.component;
 
 import com.mojang.serialization.Codec;
 import jonky.modid.Jonky;
-import net.minecraft.component.ComponentType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Uuids;
-import net.minecraft.util.dynamic.Codecs;
-
-import java.util.UUID;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 
 public class ModComponents {
-    public static final ComponentType<Integer> BANKNOTE_VALUE_COMPONENT = Registry.register(
-            Registries.DATA_COMPONENT_TYPE,
-            Identifier.of(Jonky.MOD_ID, "banknote_value"),
-            ComponentType.<Integer>builder().codec(Codec.INT).build()
+    public static final DataComponentType<Integer> BANKNOTE_VALUE_COMPONENT = Registry.register(
+            BuiltInRegistries.DATA_COMPONENT_TYPE,
+            Identifier.fromNamespaceAndPath(Jonky.MOD_ID, "banknote_value"),
+            DataComponentType.<Integer>builder().persistent(Codec.INT).build()
     );
 
-    public static final ComponentType<Integer> HEAVY_SHIELD_ENERGY_COMPONENT = Registry.register(
-            Registries.DATA_COMPONENT_TYPE,
-            Identifier.of(Jonky.MOD_ID, "heavy_shield_energy"),
-            ComponentType.<Integer>builder().codec(Codec.INT).build()
+    public static final DataComponentType<Integer> HEAVY_SHIELD_ENERGY_COMPONENT = Registry.register(
+            BuiltInRegistries.DATA_COMPONENT_TYPE,
+            Identifier.fromNamespaceAndPath(Jonky.MOD_ID, "heavy_shield_energy"),
+            DataComponentType.<Integer>builder().persistent(Codec.INT).build()
     );
 
-    public static final ComponentType<Integer> LAST_ATTACKER_COMPONENT = Registry.register(
-            Registries.DATA_COMPONENT_TYPE,
-            Identifier.of(Jonky.MOD_ID, "last_attacker_component"),
-            ComponentType.<Integer>builder().codec(Codec.INT).build()
+    public static final DataComponentType<Integer> LAST_ATTACKER_COMPONENT = Registry.register(
+            BuiltInRegistries.DATA_COMPONENT_TYPE,
+            Identifier.fromNamespaceAndPath(Jonky.MOD_ID, "last_attacker_component"),
+            DataComponentType.<Integer>builder().persistent(Codec.INT).build()
     );
 
-    public static final ComponentType<Boolean> TOOL_ABILITY_TOGGLE_COMPONENT = Registry.register(
-            Registries.DATA_COMPONENT_TYPE,
-            Identifier.of(Jonky.MOD_ID, "tool_ability_toggle_component"),
-            ComponentType.<Boolean>builder().codec(Codec.BOOL).build()
+    public static final DataComponentType<Boolean> TOOL_ABILITY_TOGGLE_COMPONENT = Registry.register(
+            BuiltInRegistries.DATA_COMPONENT_TYPE,
+            Identifier.fromNamespaceAndPath(Jonky.MOD_ID, "tool_ability_toggle_component"),
+            DataComponentType.<Boolean>builder().persistent(Codec.BOOL).build()
     );
-
-//    public static final ComponentType<UUID> LAST_ATTACKER_COMPONENT = Registry.register(
-//            Registries.DATA_COMPONENT_TYPE,
-//            Identifier.of(Jonky.MOD_ID, "last_attacker_component"),
-//            ComponentType.<UUID>builder().codec(Uuids.CODEC).build()
-//    );
 
     public static void registerModComponents() {
         Jonky.LOGGER.info("Registering {} components", Jonky.MOD_ID);

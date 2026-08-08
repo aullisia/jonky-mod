@@ -1,9 +1,11 @@
-// 1.21.6	-999999999-01-01T00:00:00	Jonky/Model Definitions
+// 26.2	-999999999-01-01T00:00:00	Jonky/Model Definitions
 1dd1548f71da2c83cb256bbfa19ea5ded86193f9 assets/jonky/items/heavy_axe.json
+e36973c6efe93d20e97220c1c1a582420aa4e5bf assets/jonky/items/heavy_greatsword.json
 d6c36f7f1ee44999774340202f4f82ecd1c58322 assets/jonky/items/heavy_hoe.json
 beb20b0efdd3d2a28d1a715e032d8bd1e4b8fdfa assets/jonky/items/heavy_pickaxe.json
 caef3364336e5d21c752c8cbeb7db5aa5b2f8b60 assets/jonky/items/heavy_shovel.json
 2c54474ad1f73af31edc12dc164aa67b1aa205a6 assets/jonky/models/item/heavy_axe.json
+93145602764261437304fc4a53978594df62fd0c assets/jonky/models/item/heavy_greatsword.json
 e7a0db49e7b2b2eda521d2423aa34432f236d7c5 assets/jonky/models/item/heavy_hoe.json
 f1c2b68801d92be561b437f4623680f77489b087 assets/jonky/models/item/heavy_pickaxe.json
 9b7a2d51018b327759a9e56a292f5e7aa5386fc7 assets/jonky/models/item/heavy_shovel.json

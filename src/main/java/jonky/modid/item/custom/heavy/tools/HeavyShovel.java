@@ -1,27 +1,28 @@
 package jonky.modid.item.custom.heavy.tools;
 
-import net.minecraft.item.ToolMaterial;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HeavyShovel extends HeavyTool{
-    public HeavyShovel(ToolMaterial material, float attackDamage, float attackSpeed, Settings settings) {
-        super(settings.shovel(material, attackDamage, attackSpeed));
+public class HeavyShovel extends HeavyTool {
+    public HeavyShovel(ToolMaterial material, float attackDamage, float attackSpeed, Item.Properties properties) {
+        super(properties.shovel(material, attackDamage, attackSpeed));
     }
 
-    public static List<BlockPos> getBlocksToBeDestroyed(int range, BlockPos initalBlockPos, ServerPlayerEntity player) {
+    public static List<BlockPos> getBlocksToBeDestroyed(int range, BlockPos initalBlockPos, ServerPlayer player) {
         List<BlockPos> positions = new ArrayList<>();
-        HitResult hit = player.raycast(20, 0, false);
+        HitResult hit = player.pick(20, 0, false);
         if (hit.getType() == HitResult.Type.BLOCK) {
             BlockHitResult blockHit = (BlockHitResult) hit;
 
-            if (blockHit.getSide() == Direction.DOWN || blockHit.getSide() == Direction.UP) {
+            if (blockHit.getDirection() == Direction.DOWN || blockHit.getDirection() == Direction.UP) {
                 for (int x = -range; x <= range; x++) {
                     for (int y = -range; y <= range; y++) {
                         positions.add(new BlockPos(initalBlockPos.getX() + x, initalBlockPos.getY(), initalBlockPos.getZ() + y));
@@ -29,7 +30,7 @@ public class HeavyShovel extends HeavyTool{
                 }
             }
 
-            if (blockHit.getSide() == Direction.NORTH || blockHit.getSide() == Direction.SOUTH) {
+            if (blockHit.getDirection() == Direction.NORTH || blockHit.getDirection() == Direction.SOUTH) {
                 for (int x = -range; x <= range; x++) {
                     for (int y = -range; y <= range; y++) {
                         positions.add(new BlockPos(initalBlockPos.getX() + x, initalBlockPos.getY() + y, initalBlockPos.getZ()));
@@ -37,7 +38,7 @@ public class HeavyShovel extends HeavyTool{
                 }
             }
 
-            if (blockHit.getSide() == Direction.EAST || blockHit.getSide() == Direction.WEST) {
+            if (blockHit.getDirection() == Direction.EAST || blockHit.getDirection() == Direction.WEST) {
                 for (int x = -range; x <= range; x++) {
                     for (int y = -range; y <= range; y++) {
                         positions.add(new BlockPos(initalBlockPos.getX(), initalBlockPos.getY() + y, initalBlockPos.getZ() + x));

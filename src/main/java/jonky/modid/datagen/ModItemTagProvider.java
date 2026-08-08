@@ -2,30 +2,28 @@ package jonky.modid.datagen;
 
 import jonky.modid.item.ModItems;
 import jonky.modid.util.ModTags;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.ItemTags;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Items;
 
 import java.util.concurrent.CompletableFuture;
 
-public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
-
-    public ModItemTagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
+    public ModItemTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
-        getTagBuilder(ModTags.Items.HEAVY_CORE_REPAIR).add(Registries.ITEM.getId(Items.HEAVY_CORE));
+    protected void addTags(HolderLookup.Provider registries) {
+        builder(ModTags.Items.HEAVY_CORE_REPAIR).add(BuiltInRegistries.ITEM.getResourceKey(Items.HEAVY_CORE).orElseThrow());
 
-        getTagBuilder(ItemTags.SWORDS).add(Registries.ITEM.getId(ModItems.HEAVY_GREATSWORD));
-        getTagBuilder(ItemTags.PICKAXES).add(Registries.ITEM.getId(ModItems.HEAVY_PICKAXE));
-        getTagBuilder(ItemTags.SHOVELS).add(Registries.ITEM.getId(ModItems.HEAVY_SHOVEL));
-        getTagBuilder(ItemTags.AXES).add(Registries.ITEM.getId(ModItems.HEAVY_AXE));
-        getTagBuilder(ItemTags.HOES).add(Registries.ITEM.getId(ModItems.HEAVY_HOE));
+        builder(ItemTags.SWORDS).add(BuiltInRegistries.ITEM.getResourceKey(ModItems.HEAVY_GREATSWORD).orElseThrow());
+        builder(ItemTags.PICKAXES).add(BuiltInRegistries.ITEM.getResourceKey(ModItems.HEAVY_PICKAXE).orElseThrow());
+        builder(ItemTags.SHOVELS).add(BuiltInRegistries.ITEM.getResourceKey(ModItems.HEAVY_SHOVEL).orElseThrow());
+        builder(ItemTags.AXES).add(BuiltInRegistries.ITEM.getResourceKey(ModItems.HEAVY_AXE).orElseThrow());
+        builder(ItemTags.HOES).add(BuiltInRegistries.ITEM.getResourceKey(ModItems.HEAVY_HOE).orElseThrow());
     }
 }

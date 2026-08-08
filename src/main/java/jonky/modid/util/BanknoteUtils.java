@@ -2,9 +2,9 @@ package jonky.modid.util;
 
 import jonky.modid.component.ModComponents;
 import jonky.modid.item.ModItems;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.CustomModelDataComponent;
-import net.minecraft.item.ItemStack;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomModelData;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,8 +36,8 @@ public class BanknoteUtils {
         List<Integer> integerList = Collections.emptyList();
 
         // Setting customModelData
-        CustomModelDataComponent customModelDataComponent = new CustomModelDataComponent(floatList, booleanList, stringList, integerList);
-        stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, customModelDataComponent);
+        CustomModelData customModelData = new CustomModelData(floatList, booleanList, stringList, integerList);
+        stack.set(DataComponents.CUSTOM_MODEL_DATA, customModelData);
 
         return stack;
     }
